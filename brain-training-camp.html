@@ -1,0 +1,5602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>脑力训练营</title>
+  <style>
+    :root {
+      --bg: #f5efe2;
+      --bg-soft: #fdf9f0;
+      --ink: #182127;
+      --muted: #5b6770;
+      --brand: #0f766e;
+      --brand-strong: #0b4f4a;
+      --accent: #f97316;
+      --accent-soft: rgba(249, 115, 22, 0.16);
+      --panel: rgba(255, 252, 246, 0.84);
+      --line: rgba(24, 33, 39, 0.08);
+      --danger: #b42318;
+      --success: #15803d;
+      --shadow: 0 18px 48px rgba(24, 33, 39, 0.12);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Trebuchet MS", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 24%),
+        radial-gradient(circle at 85% 15%, rgba(249, 115, 22, 0.18), transparent 20%),
+        linear-gradient(180deg, #f7f1e4 0%, #efe7d6 100%);
+    }
+
+    body.focus-stage-lock {
+      overflow: hidden;
+    }
+
+    body.focus-stage-lock .sidebar-toggle,
+    body.focus-stage-lock .sidebar-scrim,
+    body.focus-stage-lock .side-rail {
+      display: none !important;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(24, 33, 39, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 33, 39, 0.03) 1px, transparent 1px);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 85%);
+    }
+
+    .app-shell {
+      width: min(1280px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .workspace-shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-stage {
+      min-width: 0;
+    }
+
+    .sidebar-toggle,
+    .side-rail-close {
+      display: none;
+    }
+
+    .sidebar-scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(24, 33, 39, 0.38);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s ease;
+      z-index: 45;
+    }
+
+    .side-rail {
+      position: sticky;
+      top: 18px;
+      align-self: start;
+      z-index: 20;
+    }
+
+    .side-rail-card {
+      padding: 16px;
+      border-radius: 28px;
+    }
+
+    .side-rail-head {
+      display: grid;
+      gap: 10px;
+    }
+
+    .side-rail-kicker {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.12);
+      color: var(--brand-strong);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .side-rail-head h2 {
+      font-size: 1.5rem;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .side-rail-head p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .side-rail-note {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(249, 115, 22, 0.08));
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .hero,
+    .panel {
+      backdrop-filter: blur(18px);
+      background: var(--panel);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      padding: 28px 22px 22px;
+      animation: rise 0.7s ease-out both;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -70px -70px auto;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 118, 110, 0.18), transparent 68%);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      color: var(--brand-strong);
+      font-size: 0.92rem;
+      letter-spacing: 0.04em;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .hero h1 {
+      margin-top: 16px;
+      font-size: clamp(2.1rem, 5vw, 3.5rem);
+      line-height: 0.95;
+      max-width: 7.2em;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin-top: 14px;
+      max-width: 52rem;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .quick-nav {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .quick-nav-tab {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      width: 100%;
+      padding: 14px 14px 14px 16px;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(24, 33, 39, 0.07);
+      color: var(--ink);
+      text-align: left;
+      box-shadow: none;
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .quick-nav-tab::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      bottom: 12px;
+      width: 4px;
+      border-radius: 999px;
+      background: transparent;
+      transition: background 0.18s ease;
+    }
+
+    .quick-nav-tab:hover,
+    .quick-nav-tab:focus-visible {
+      transform: translateX(3px);
+      border-color: rgba(15, 118, 110, 0.32);
+      box-shadow: 0 10px 22px rgba(15, 118, 110, 0.1);
+    }
+
+    .quick-nav-tab[aria-selected="true"] {
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.18), rgba(255, 255, 255, 0.84));
+      border-color: rgba(15, 118, 110, 0.24);
+      box-shadow: 0 14px 26px rgba(15, 118, 110, 0.12);
+    }
+
+    .quick-nav-tab[aria-selected="true"]::before {
+      background: linear-gradient(180deg, var(--brand), #34d399);
+    }
+
+    .quick-nav-copy {
+      display: grid;
+      gap: 5px;
+      line-height: 1.18;
+      min-width: 0;
+    }
+
+    .quick-nav-copy strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .quick-nav-copy small {
+      color: var(--muted);
+      font-size: 0.74rem;
+      line-height: 1.35;
+    }
+
+    .quick-nav-index {
+      flex: none;
+      display: grid;
+      place-items: center;
+      min-width: 40px;
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: rgba(24, 33, 39, 0.06);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .stats-grid,
+    .games-grid {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      animation: rise 0.75s ease-out 0.08s both;
+    }
+
+    .panel {
+      border-radius: var(--radius-xl);
+      padding: 20px;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      inset: auto 12px 10px auto;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.14), transparent 70%);
+    }
+
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      margin-top: 12px;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      line-height: 1;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .stat-note {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .games-grid {
+      display: block;
+      max-width: none;
+      margin: 18px 0 0;
+      animation: rise 0.8s ease-out 0.14s both;
+    }
+
+    .game-card {
+      min-height: 100%;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .game-card.is-active {
+      display: flex;
+    }
+
+    .game-card[hidden] {
+      display: none !important;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .section-head p {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      flex: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.1);
+      color: var(--brand-strong);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 10px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    select,
+    input,
+    button {
+      font: inherit;
+    }
+
+    select,
+    input,
+    .ghost-box,
+    .live-chip {
+      min-height: 46px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(24, 33, 39, 0.1);
+      background: rgba(255, 255, 255, 0.74);
+      padding: 12px 14px;
+      color: var(--ink);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 13px 18px;
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+    }
+
+    button:hover,
+    button:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--brand), var(--brand-strong));
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(15, 118, 110, 0.18);
+    }
+
+    .secondary-btn {
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--ink);
+      border: 1px solid rgba(24, 33, 39, 0.1);
+    }
+
+    .warn-btn {
+      background: rgba(180, 35, 24, 0.12);
+      color: var(--danger);
+      border: 1px solid rgba(180, 35, 24, 0.18);
+    }
+
+    .accent-btn {
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(249, 115, 22, 0.2);
+    }
+
+    .inline-btn {
+      background: rgba(255, 255, 255, 0.76);
+      color: var(--ink);
+      border: 1px solid rgba(24, 33, 39, 0.1);
+      box-shadow: 0 10px 24px rgba(24, 33, 39, 0.08);
+    }
+
+    .inline-btn[aria-pressed="true"] {
+      border-color: rgba(15, 118, 110, 0.28);
+      color: var(--brand-strong);
+    }
+
+    .live-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .live-chip span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+
+    .live-chip strong {
+      display: block;
+      font-size: 1.18rem;
+      letter-spacing: -0.03em;
+    }
+
+    .status {
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px dashed rgba(24, 33, 39, 0.1);
+      padding: 13px 14px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .status.ok {
+      border-style: solid;
+      color: var(--success);
+      background: rgba(21, 128, 61, 0.08);
+    }
+
+    .status.warn {
+      border-style: solid;
+      color: var(--danger);
+      background: rgba(180, 35, 24, 0.08);
+    }
+
+    .schulte-board {
+      display: grid;
+      gap: 10px;
+    }
+
+    .schulte-stage {
+      display: grid;
+      gap: 10px;
+      width: min(100%, 620px);
+      margin: 0 auto;
+    }
+
+    .schulte-stage .button-row {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .schulte-stage .button-row button {
+      flex: 1 1 180px;
+    }
+
+    .schulte-cell {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 16px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(243, 236, 223, 0.92));
+      color: var(--ink);
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      font-weight: 800;
+      box-shadow: inset 0 -10px 20px rgba(24, 33, 39, 0.04);
+    }
+
+    .schulte-cell.done {
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.18), rgba(15, 118, 110, 0.07));
+      color: var(--brand-strong);
+      border-color: rgba(15, 118, 110, 0.2);
+      text-decoration: line-through;
+    }
+
+    .schulte-cell.wrong {
+      animation: shake 0.25s linear;
+      background: linear-gradient(180deg, rgba(180, 35, 24, 0.12), rgba(255, 255, 255, 0.85));
+    }
+
+    .tback-stage {
+      display: grid;
+      gap: 12px;
+    }
+
+    .memory-plate {
+      min-height: 160px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 46%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(240, 231, 215, 0.9));
+      text-align: center;
+    }
+
+    .memory-symbol {
+      font-size: clamp(3.8rem, 14vw, 5.8rem);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      line-height: 0.9;
+    }
+
+    .memory-hint {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 10px;
+    }
+
+    .progress-bar {
+      position: relative;
+      height: 10px;
+      background: rgba(24, 33, 39, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #fbbf24);
+      border-radius: inherit;
+      transition: width 0.18s linear;
+    }
+
+    .stroop-display,
+    .gng-display {
+      min-height: 190px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.12), transparent 46%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(240, 231, 215, 0.9));
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stroop-word {
+      font-size: clamp(3rem, 12vw, 4.8rem);
+      font-weight: 900;
+      line-height: 0.95;
+      letter-spacing: 0.08em;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
+      gap: 10px;
+    }
+
+    .color-btn {
+      min-height: 56px;
+      border-radius: 18px;
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      box-shadow: inset 0 -8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    .gng-display.go {
+      background:
+        radial-gradient(circle at top, rgba(22, 163, 74, 0.22), transparent 46%),
+        linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(220, 252, 231, 0.9));
+      color: #0d572b;
+    }
+
+    .gng-display.nogo {
+      background:
+        radial-gradient(circle at top, rgba(220, 38, 38, 0.18), transparent 46%),
+        linear-gradient(180deg, rgba(254, 242, 242, 0.96), rgba(254, 226, 226, 0.92));
+      color: #7f1d1d;
+    }
+
+    .gng-symbol {
+      font-size: clamp(2.8rem, 11vw, 4.6rem);
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: 0.06em;
+    }
+
+    .saccade-board {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .saccade-node {
+      min-height: 158px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 10px;
+      border-radius: 24px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.1), transparent 42%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(240, 231, 215, 0.92));
+      padding: 18px 12px;
+      text-align: center;
+      color: var(--ink);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    button.saccade-node {
+      cursor: pointer;
+    }
+
+    button.saccade-node:disabled {
+      opacity: 1;
+      cursor: default;
+    }
+
+    .saccade-node.center {
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.14), transparent 44%),
+        linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.92));
+    }
+
+    .saccade-node.stimulus {
+      border-color: rgba(249, 115, 22, 0.34);
+      background:
+        radial-gradient(circle at top, rgba(249, 115, 22, 0.22), transparent 42%),
+        linear-gradient(180deg, rgba(255, 247, 237, 0.96), rgba(254, 215, 170, 0.9));
+      animation: swayPulse 0.55s ease-in-out infinite alternate;
+    }
+
+    .saccade-node.correct {
+      border-color: rgba(21, 128, 61, 0.3);
+      background:
+        radial-gradient(circle at top, rgba(21, 128, 61, 0.18), transparent 42%),
+        linear-gradient(180deg, rgba(240, 253, 244, 0.96), rgba(220, 252, 231, 0.9));
+    }
+
+    .saccade-node.wrong {
+      border-color: rgba(180, 35, 24, 0.3);
+      background:
+        radial-gradient(circle at top, rgba(180, 35, 24, 0.18), transparent 42%),
+        linear-gradient(180deg, rgba(254, 242, 242, 0.96), rgba(254, 226, 226, 0.9));
+    }
+
+    .saccade-symbol {
+      font-size: clamp(2.7rem, 11vw, 4.4rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+    }
+
+    .reaction-zone {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(243, 236, 223, 0.9));
+      color: var(--ink);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 24px;
+      transition: transform 0.15s ease, background 0.18s ease, color 0.18s ease;
+    }
+
+    .reaction-zone.ready {
+      background: linear-gradient(135deg, rgba(22, 163, 74, 0.2), rgba(187, 247, 208, 0.92));
+      color: #0b3b20;
+    }
+
+    .reaction-zone.waiting {
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.18), rgba(255, 247, 237, 0.95));
+    }
+
+    .reaction-zone.pressed {
+      transform: scale(0.985);
+    }
+
+    .sustained-zone {
+      min-height: 238px;
+      display: grid;
+      place-items: center;
+      gap: 12px;
+      border-radius: 24px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        radial-gradient(circle at top, rgba(14, 165, 233, 0.12), transparent 36%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(235, 245, 248, 0.92));
+      color: var(--ink);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 24px 18px;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .sustained-zone.active {
+      border-color: rgba(14, 165, 233, 0.2);
+      background:
+        radial-gradient(circle at top, rgba(14, 165, 233, 0.16), transparent 38%),
+        linear-gradient(135deg, rgba(239, 249, 255, 0.98), rgba(224, 242, 254, 0.94));
+    }
+
+    .sustained-zone.pressed {
+      transform: scale(0.985);
+    }
+
+    .sustained-stimulus {
+      font-size: clamp(4.2rem, 17vw, 6.4rem);
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      line-height: 0.88;
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      animation: stimulusBeat 0.22s ease;
+    }
+
+    .sustained-subtext {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+      max-width: 28rem;
+    }
+
+    .breath-zone {
+      min-height: 286px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      gap: 18px;
+      border-radius: 28px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(252, 253, 251, 0.96), rgba(232, 241, 236, 0.92));
+      color: var(--ink);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 22px 18px 20px;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, background 0.22s ease, border-color 0.22s ease;
+    }
+
+    .breath-zone.active {
+      border-color: rgba(15, 118, 110, 0.18);
+    }
+
+    .breath-zone.inhale {
+      background:
+        radial-gradient(circle at top, rgba(15, 118, 110, 0.18), transparent 36%),
+        linear-gradient(180deg, rgba(241, 253, 247, 0.98), rgba(220, 252, 231, 0.92));
+      color: #0b3b35;
+    }
+
+    .breath-zone.exhale {
+      background:
+        radial-gradient(circle at top, rgba(249, 115, 22, 0.18), transparent 36%),
+        linear-gradient(180deg, rgba(255, 247, 237, 0.98), rgba(254, 215, 170, 0.9));
+      color: #7c2d12;
+    }
+
+    .breath-zone.done {
+      background:
+        radial-gradient(circle at top, rgba(37, 99, 235, 0.14), transparent 36%),
+        linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.92));
+    }
+
+    .breath-zone.pressed {
+      transform: scale(0.985);
+    }
+
+    .breath-orb {
+      width: clamp(140px, 42vw, 210px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.18) 38%, rgba(255, 255, 255, 0.08) 58%, transparent 74%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.18));
+      box-shadow:
+        inset 0 -12px 22px rgba(24, 33, 39, 0.08),
+        0 18px 40px rgba(24, 33, 39, 0.12);
+      transform: scale(0.82);
+      transition: transform 0.72s ease, box-shadow 0.28s ease, background 0.28s ease;
+      will-change: transform;
+    }
+
+    .breath-zone.inhale .breath-orb {
+      box-shadow:
+        inset 0 -12px 22px rgba(15, 118, 110, 0.14),
+        0 20px 44px rgba(15, 118, 110, 0.18);
+    }
+
+    .breath-zone.exhale .breath-orb {
+      box-shadow:
+        inset 0 -12px 22px rgba(249, 115, 22, 0.16),
+        0 20px 44px rgba(249, 115, 22, 0.18);
+    }
+
+    .breath-orb.beat {
+      animation: breathBloom 0.24s ease;
+    }
+
+    .breath-word {
+      font-size: clamp(2.9rem, 12vw, 4.6rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: 0.12em;
+      transform: translateX(0.08em);
+    }
+
+    .breath-cycle-note {
+      width: min(100%, 28rem);
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .breath-track {
+      width: min(100%, 420px);
+      display: grid;
+      grid-template-columns: repeat(10, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .breath-beat {
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background: rgba(255, 255, 255, 0.54);
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .breath-beat.current {
+      transform: translateY(-2px);
+      border-color: rgba(24, 33, 39, 0.22);
+      background: rgba(24, 33, 39, 0.18);
+    }
+
+    .breath-beat.hit {
+      border-color: rgba(21, 128, 61, 0.26);
+      background: rgba(34, 197, 94, 0.28);
+    }
+
+    .breath-beat.off {
+      border-color: rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.28);
+    }
+
+    .breath-beat.miss {
+      border-color: rgba(180, 35, 24, 0.24);
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .focus-stage {
+      position: relative;
+      display: grid;
+      gap: 12px;
+    }
+
+    .focus-stage-overlay {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 12;
+      display: none;
+    }
+
+    .focus-stage-exit-btn {
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.88);
+      color: var(--ink);
+      border: 1px solid rgba(24, 33, 39, 0.12);
+      box-shadow: 0 10px 24px rgba(24, 33, 39, 0.14);
+    }
+
+    .focus-stage.is-pseudo-fullscreen,
+    .focus-stage:fullscreen,
+    .focus-stage:-webkit-full-screen {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 9999;
+      width: auto;
+      height: auto;
+      margin: 0;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 16px)
+        calc(env(safe-area-inset-right, 0px) + 16px)
+        calc(env(safe-area-inset-bottom, 0px) + 18px)
+        calc(env(safe-area-inset-left, 0px) + 16px);
+      overflow: auto;
+      background:
+        radial-gradient(circle at center, rgba(34, 197, 94, 0.06), transparent 28%),
+        linear-gradient(180deg, rgba(247, 241, 228, 0.985), rgba(238, 231, 214, 0.995));
+      align-content: center;
+      justify-items: center;
+      grid-template-rows: min-content minmax(0, auto) min-content;
+      gap: 14px;
+    }
+
+    .focus-stage.is-pseudo-fullscreen .focus-stage-overlay,
+    .focus-stage:fullscreen .focus-stage-overlay,
+    .focus-stage:-webkit-full-screen .focus-stage-overlay {
+      display: flex;
+    }
+
+    .focus-stage.is-pseudo-fullscreen .focus-arena,
+    .focus-stage:fullscreen .focus-arena,
+    .focus-stage:-webkit-full-screen .focus-arena {
+      width: 100%;
+      max-width: 920px;
+      min-height: 380px;
+      height: 72vh;
+      max-height: 640px;
+      margin: 0 auto;
+    }
+
+    .focus-stage.is-pseudo-fullscreen .focus-caption,
+    .focus-stage:fullscreen .focus-caption,
+    .focus-stage:-webkit-full-screen .focus-caption {
+      width: 100%;
+      max-width: 920px;
+      margin-top: 0;
+      padding: 0 8px;
+      font-size: 0.92rem;
+    }
+
+    .focus-arena {
+      position: relative;
+      min-height: 336px;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(241, 236, 228, 0.9));
+      isolation: isolate;
+      touch-action: none;
+    }
+
+    .focus-arena::before {
+      content: "";
+      position: absolute;
+      inset: -32%;
+      background:
+        radial-gradient(circle at 30% 28%, rgba(34, 197, 94, 0.12), transparent 20%),
+        radial-gradient(circle at 70% 72%, rgba(59, 130, 246, 0.09), transparent 24%),
+        repeating-radial-gradient(circle at center, rgba(255, 255, 255, 0) 0 36px, rgba(24, 33, 39, 0.028) 36px 37px);
+      opacity: 0.52;
+      animation: focusField 30s linear infinite;
+    }
+
+    .focus-arena::after {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      border: 1px dashed rgba(24, 33, 39, 0.12);
+      opacity: 0.34;
+      pointer-events: none;
+    }
+
+    .focus-arena.warmup {
+      background: linear-gradient(180deg, rgba(248, 253, 246, 0.96), rgba(233, 246, 236, 0.92));
+    }
+
+    .focus-arena.warmup::before {
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.7), transparent 58%),
+        radial-gradient(circle, rgba(24, 33, 39, 0.072) 0 1.05px, transparent 1.6px) 0 0 / 26px 26px,
+        radial-gradient(circle, rgba(24, 33, 39, 0.05) 0 0.9px, transparent 1.4px) 13px 13px / 26px 26px,
+        radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.09), transparent 64%);
+      opacity: 0.32;
+      animation: focusField 38s linear infinite;
+    }
+
+    .focus-arena.challenge {
+      background: linear-gradient(180deg, rgba(255, 248, 240, 0.96), rgba(243, 227, 209, 0.92));
+    }
+
+    .focus-arena.done {
+      background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.92));
+    }
+
+    .focus-arena.disturbed {
+      animation: shake 0.26s linear 1;
+    }
+
+    .focus-arena.challenge::before {
+      opacity: 0.9;
+      filter: saturate(1.1);
+    }
+
+    .focus-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .focus-warmup-layer {
+      transition: opacity 0.5s ease;
+    }
+
+    .focus-arena.challenge .focus-warmup-layer,
+    .focus-arena.done .focus-warmup-layer {
+      opacity: 0.08;
+    }
+
+    .focus-troxler-scene {
+      position: absolute;
+      inset: 0;
+    }
+
+    .focus-troxler-grid-shell {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 320px;
+      height: 320px;
+      transform: translate(-50%, -50%);
+    }
+
+    .focus-troxler-grid {
+      position: absolute;
+      inset: 0;
+      animation: focusTroxlerSpin 32s linear infinite;
+      opacity: 0.9;
+    }
+
+    .focus-troxler-mark {
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      transform: translate(-50%, -50%);
+      opacity: 0.9;
+      filter: drop-shadow(0 0 6px rgba(220, 38, 38, 0.16));
+    }
+
+    .focus-troxler-seg {
+      position: absolute;
+      display: block;
+      border-radius: 999px;
+      background: rgba(239, 68, 68, 0.86);
+      box-shadow: 0 0 7px rgba(239, 68, 68, 0.08);
+    }
+
+    .focus-troxler-triangle {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 230px;
+      height: 199px;
+      transform: translate(-50%, -66.666%);
+    }
+
+    .focus-anchor-dot {
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f8df55;
+      box-shadow:
+        0 0 0 4px rgba(248, 223, 85, 0.08),
+        0 0 16px rgba(248, 223, 85, 0.16);
+      filter: saturate(0.92);
+    }
+
+    .focus-anchor-dot.anchor-top {
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
+    }
+
+    .focus-anchor-dot.anchor-left {
+      left: 0;
+      top: 100%;
+      transform: translate(-50%, -50%);
+    }
+
+    .focus-anchor-dot.anchor-right {
+      left: 100%;
+      top: 100%;
+      transform: translate(-50%, -50%);
+    }
+
+    .focus-center-wrap {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 110px;
+      height: 110px;
+      display: grid;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+
+    .focus-crosshair {
+      position: absolute;
+      width: 2px;
+      height: 72px;
+      background: rgba(24, 33, 39, 0.18);
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.28s ease;
+    }
+
+    .focus-crosshair::before,
+    .focus-crosshair::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .focus-crosshair::before {
+      width: 72px;
+      height: 2px;
+      background: rgba(24, 33, 39, 0.18);
+      border-radius: 999px;
+    }
+
+    .focus-crosshair::after {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      border: 1px solid rgba(24, 33, 39, 0.12);
+    }
+
+    .focus-fixation-dot {
+      position: relative;
+      z-index: 1;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow:
+        0 0 0 12px rgba(34, 197, 94, 0.16),
+        0 0 28px rgba(34, 197, 94, 0.2);
+      transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+    }
+
+    .focus-arena.warmup .focus-fixation-dot {
+      background: #22c55e;
+      box-shadow:
+        0 0 0 12px rgba(34, 197, 94, 0.16),
+        0 0 28px rgba(34, 197, 94, 0.2);
+    }
+
+    .focus-arena.challenge .focus-fixation-dot {
+      background: #ef4444;
+      box-shadow:
+        0 0 0 14px rgba(239, 68, 68, 0.16),
+        0 0 40px rgba(239, 68, 68, 0.28);
+      animation: focusPulse 1.4s ease-in-out infinite;
+    }
+
+    .focus-arena.done .focus-fixation-dot {
+      background: var(--brand);
+      box-shadow:
+        0 0 0 14px rgba(15, 118, 110, 0.15),
+        0 0 32px rgba(15, 118, 110, 0.22);
+    }
+
+    .focus-arena.challenge .focus-crosshair,
+    .focus-arena.done .focus-crosshair {
+      opacity: 1;
+    }
+
+    .focus-caption {
+      width: min(100%, 44rem);
+      margin: 12px auto 0;
+      padding: 0 6px;
+      text-align: center;
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .focus-distractor-layer {
+      overflow: hidden;
+      z-index: 4;
+    }
+
+    .focus-distractor {
+      position: absolute;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(8px);
+      font-weight: 900;
+      line-height: 1;
+      opacity: 0;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+      box-shadow: 0 10px 28px rgba(24, 33, 39, 0.16);
+      animation:
+        focusMotion var(--dur, 1200ms) ease-out forwards,
+        focusFlicker 220ms steps(2, end) 5;
+    }
+
+    .focus-distractor.spark,
+    .focus-distractor.ring {
+      border-radius: 50%;
+    }
+
+    .focus-distractor.block {
+      border-radius: 14px;
+    }
+
+    .focus-distractor.chevron {
+      border-radius: 12px;
+    }
+
+    .focus-distractor.sweep {
+      animation:
+        focusSweep var(--dur, 1200ms) ease-out forwards,
+        focusFlicker 180ms steps(2, end) 4;
+    }
+
+    .focus-distractor.spin {
+      animation:
+        focusSpinDrift var(--dur, 1200ms) ease-out forwards,
+        focusFlicker 240ms steps(2, end) 4;
+    }
+
+    .record-panel {
+      margin-top: 0;
+      animation: none;
+    }
+
+    .record-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .history-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 0.9fr);
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(24, 33, 39, 0.08);
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .history-item strong {
+      display: block;
+      font-size: 1rem;
+    }
+
+    .history-meta,
+    .empty-state {
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 0.92rem;
+    }
+
+    .tiny {
+      font-size: 0.84rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .footer-note {
+      margin-top: 20px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    @keyframes swayPulse {
+      from {
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+      to {
+        transform: translateY(-6px) scale(1.04) rotate(4deg);
+      }
+    }
+
+    @keyframes focusField {
+      from {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      to {
+        transform: translate3d(4%, -3%, 0) rotate(360deg);
+      }
+    }
+
+    @keyframes focusTroxlerRotate {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+
+    @keyframes focusTroxlerSpin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes focusPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.12);
+      }
+    }
+
+    @keyframes focusMotion {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.7) rotate(0deg);
+      }
+      22% {
+        opacity: 0.92;
+      }
+      100% {
+        opacity: 0.15;
+        transform: translate(var(--dx), var(--dy)) scale(var(--scale-end, 1.2)) rotate(var(--rot));
+      }
+    }
+
+    @keyframes focusSweep {
+      0% {
+        opacity: 0;
+        transform: translate(calc(var(--dx) * -0.35), calc(var(--dy) * -0.35)) scale(0.5) rotate(0deg);
+      }
+      18% {
+        opacity: 0.95;
+      }
+      100% {
+        opacity: 0.12;
+        transform: translate(var(--dx), var(--dy)) scale(var(--scale-end, 1.08)) rotate(var(--rot));
+      }
+    }
+
+    @keyframes focusSpinDrift {
+      0% {
+        opacity: 0;
+        transform: translate(0, 0) scale(0.65) rotate(0deg);
+      }
+      18% {
+        opacity: 0.92;
+      }
+      100% {
+        opacity: 0.14;
+        transform: translate(var(--dx), var(--dy)) scale(var(--scale-end, 1.12)) rotate(var(--rot));
+      }
+    }
+
+    @keyframes focusFlicker {
+      0%, 100% {
+        filter: blur(0);
+      }
+      50% {
+        filter: blur(1.2px);
+      }
+    }
+
+    @keyframes stimulusBeat {
+      0% {
+        transform: scale(0.78);
+        opacity: 0.22;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes breathBloom {
+      0% {
+        filter: brightness(0.98);
+      }
+      48% {
+        filter: brightness(1.08);
+      }
+      100% {
+        filter: brightness(1);
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .workspace-shell {
+        grid-template-columns: 252px minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app-shell {
+        width: min(100% - 18px, 760px);
+        padding-top: 14px;
+      }
+
+      .workspace-shell {
+        display: block;
+      }
+
+      .main-stage {
+        padding-top: 56px;
+      }
+
+      .sidebar-toggle {
+        position: fixed;
+        top: calc(env(safe-area-inset-top, 0px) + 10px);
+        left: 12px;
+        z-index: 60;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        padding: 0;
+        border-radius: 50%;
+        background: rgba(255, 252, 246, 0.92);
+        border: 1px solid rgba(24, 33, 39, 0.08);
+        color: var(--ink);
+        font-size: 0;
+        line-height: 0;
+        box-shadow: 0 14px 28px rgba(24, 33, 39, 0.16);
+        backdrop-filter: blur(14px);
+      }
+
+      .sidebar-toggle::before {
+        content: "≡";
+        font-size: 1.08rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .sidebar-scrim {
+        display: block;
+      }
+
+      .side-rail {
+        position: fixed;
+        top: 0;
+        left: -348px;
+        bottom: auto;
+        width: min(84vw, 320px);
+        max-width: 320px;
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100vh;
+        max-height: 100dvh;
+        padding:
+          calc(env(safe-area-inset-top, 0px) + 12px)
+          10px
+          calc(env(safe-area-inset-bottom, 0px) + 12px)
+          10px;
+        transition: left 0.24s ease;
+        overflow-y: scroll;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+        z-index: 65;
+      }
+
+      .side-rail-card {
+        display: block;
+        min-height: 100%;
+        padding: 16px 14px;
+        border-radius: 0 26px 26px 0;
+        overflow: visible;
+      }
+
+      .side-rail-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        margin-left: auto;
+        margin-bottom: 10px;
+        border-radius: 50%;
+        background: rgba(24, 33, 39, 0.06);
+      }
+
+      body.sidebar-open {
+        overflow: hidden;
+      }
+
+      body.sidebar-open .sidebar-scrim {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      body.sidebar-open .side-rail {
+        left: 0;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        padding: 22px 16px 18px;
+        border-radius: 24px;
+      }
+
+      .stats-grid,
+      .field-grid,
+      .live-row,
+      .history-item {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-nav-tab {
+        padding: 13px 13px 13px 15px;
+      }
+
+      .quick-nav-index {
+        min-width: 36px;
+        height: 30px;
+      }
+
+      .panel {
+        padding: 16px;
+      }
+
+      .schulte-stage {
+        width: 100%;
+      }
+
+      .saccade-node {
+        min-height: 124px;
+      }
+
+      .reaction-zone {
+        min-height: 180px;
+      }
+
+      .sustained-zone {
+        min-height: 188px;
+      }
+
+      .breath-zone {
+        min-height: 240px;
+      }
+
+      .focus-arena {
+        min-height: 300px;
+      }
+
+      .focus-troxler-grid-shell {
+        width: 280px;
+        height: 280px;
+      }
+
+      .focus-troxler-mark {
+        width: 24px;
+        height: 24px;
+      }
+
+      .focus-troxler-triangle {
+        width: 204px;
+        height: 177px;
+      }
+
+      .focus-anchor-dot {
+        width: 16px;
+        height: 16px;
+      }
+
+      .focus-center-wrap {
+        width: 104px;
+        height: 104px;
+      }
+
+      .focus-caption {
+        font-size: 0.82rem;
+      }
+
+      .focus-stage.is-pseudo-fullscreen,
+      .focus-stage:fullscreen,
+      .focus-stage:-webkit-full-screen {
+        padding:
+          calc(env(safe-area-inset-top, 0px) + 10px)
+          calc(env(safe-area-inset-right, 0px) + 10px)
+          calc(env(safe-area-inset-bottom, 0px) + 12px)
+          calc(env(safe-area-inset-left, 0px) + 10px);
+      }
+
+      .focus-stage.is-pseudo-fullscreen .focus-arena,
+      .focus-stage:fullscreen .focus-arena,
+      .focus-stage:-webkit-full-screen .focus-arena {
+        min-height: 300px;
+        height: 68vh;
+      }
+
+      .focus-stage.is-pseudo-fullscreen .focus-stage-overlay,
+      .focus-stage:fullscreen .focus-stage-overlay,
+      .focus-stage:-webkit-full-screen .focus-stage-overlay {
+        top: 10px;
+        right: 10px;
+      }
+
+      .focus-stage-exit-btn {
+        padding: 9px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <button class="sidebar-toggle" id="sidebar-toggle-btn" type="button" aria-expanded="false" aria-controls="side-rail" aria-label="打开训练侧边栏"></button>
+    <div class="sidebar-scrim" id="sidebar-scrim" aria-hidden="true"></div>
+
+    <div class="workspace-shell">
+      <aside class="side-rail" id="side-rail" aria-label="训练项目侧边栏">
+        <div class="panel side-rail-card">
+          <button class="side-rail-close" id="side-rail-close-btn" type="button" aria-label="关闭侧边栏">×</button>
+          <div class="side-rail-head">
+            <div class="side-rail-kicker">Training Menu</div>
+            <h2>项目切换</h2>
+            <p>左侧切项目，右侧专注当前训练。训练进行中会阻止误切换。</p>
+          </div>
+
+          <div class="quick-nav" id="quick-nav" role="tablist" aria-label="训练项目切换">
+            <button class="quick-nav-tab" id="nav-schulte-card" data-panel-target="schulte-card" type="button" role="tab" aria-selected="true" aria-controls="schulte-card">
+              <span class="quick-nav-copy"><strong>舒尔特方格</strong><small>专注与视野扫描</small></span>
+              <span class="quick-nav-index">01</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-tback-card" data-panel-target="tback-card" type="button" role="tab" aria-selected="false" aria-controls="tback-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>T-Back</strong><small>工作记忆节奏训练</small></span>
+              <span class="quick-nav-index">02</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-stroop-card" data-panel-target="stroop-card" type="button" role="tab" aria-selected="false" aria-controls="stroop-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>Stroop</strong><small>看颜色，不看字义</small></span>
+              <span class="quick-nav-index">03</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-gonogo-card" data-panel-target="gonogo-card" type="button" role="tab" aria-selected="false" aria-controls="gonogo-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>Go / No-Go</strong><small>冲动克制与抑制</small></span>
+              <span class="quick-nav-index">04</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-antisaccade-card" data-panel-target="antisaccade-card" type="button" role="tab" aria-selected="false" aria-controls="antisaccade-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>反扫视</strong><small>看反方向，再回中</small></span>
+              <span class="quick-nav-index">05</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-focus-card" data-panel-target="focus-card" type="button" role="tab" aria-selected="false" aria-controls="focus-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>凝视专注</strong><small>中心定视，抗外围干扰</small></span>
+              <span class="quick-nav-index">06</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-reaction-card" data-panel-target="reaction-card" type="button" role="tab" aria-selected="false" aria-controls="reaction-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>反应时</strong><small>一次开始，连续多轮</small></span>
+              <span class="quick-nav-index">07</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-sustained-card" data-panel-target="sustained-card" type="button" role="tab" aria-selected="false" aria-controls="sustained-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>持续注意</strong><small>只点目标字母</small></span>
+              <span class="quick-nav-index">08</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-breath-card" data-panel-target="breath-card" type="button" role="tab" aria-selected="false" aria-controls="breath-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>节拍呼吸</strong><small>吸 4 秒，呼 6 秒</small></span>
+              <span class="quick-nav-index">09</span>
+            </button>
+            <button class="quick-nav-tab" id="nav-records-card" data-panel-target="records-card" type="button" role="tab" aria-selected="false" aria-controls="records-card" tabindex="-1">
+              <span class="quick-nav-copy"><strong>训练记录</strong><small>查看、导出、清空</small></span>
+              <span class="quick-nav-index">10</span>
+            </button>
+          </div>
+
+          <div class="side-rail-note">手机端也保持侧边栏形态，点击左上角按钮呼出；桌面端则固定在左边，切项目更直接。</div>
+        </div>
+      </aside>
+
+      <main class="main-stage">
+        <section class="hero">
+          <div class="eyebrow">离线单文件 · 本地记录 · 手机可用</div>
+          <h1>脑力训练营</h1>
+          <p>一个专门给本地使用设计的轻量训练页面，包含舒尔特方格、T-Back 工作记忆、Stroop 斯特鲁普色词测试、Go/No-Go 冲动克制、反扫视、凝视专注抗干扰、多轮反应时训练、持续注意力训练，以及吸 4 秒呼 6 秒的节拍呼吸慢练。所有记录默认保存在当前浏览器的本地存储里，不依赖网络。</p>
+        </section>
+
+        <section class="stats-grid" aria-label="训练总览">
+      <article class="panel stat-card">
+        <h3>总训练次数</h3>
+        <div class="stat-value" id="total-sessions">0</div>
+        <div class="stat-note">所有模块累计记录</div>
+      </article>
+      <article class="panel stat-card">
+        <h3>累计训练时长</h3>
+        <div class="stat-value" id="total-duration">0s</div>
+        <div class="stat-note">按每次游戏时长合计</div>
+      </article>
+      <article class="panel stat-card">
+        <h3>舒尔特最佳</h3>
+        <div class="stat-value" id="best-schulte">-</div>
+        <div class="stat-note">越短越好</div>
+      </article>
+      <article class="panel stat-card">
+        <h3>T-Back 最佳</h3>
+        <div class="stat-value" id="best-tback">-</div>
+        <div class="stat-note">按准确率统计</div>
+      </article>
+        </section>
+
+        <section class="games-grid">
+      <article class="panel game-card is-active" id="schulte-card" role="tabpanel" aria-labelledby="nav-schulte-card" aria-hidden="false">
+        <div class="section-head">
+          <div>
+            <h2>舒尔特方格</h2>
+            <p>按顺序点选数字，记录完整用时。适合做专注热身和扫视速度训练。</p>
+          </div>
+          <div class="badge">扫描</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="schulte-size">方格尺寸</label>
+              <select id="schulte-size">
+                <option value="4">4 × 4</option>
+                <option value="5" selected>5 × 5</option>
+                <option value="6">6 × 6</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="schulte-show-selected">已点选显示</label>
+              <select id="schulte-show-selected">
+                <option value="on" selected>是</option>
+                <option value="off">否</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>当前状态</label>
+              <div class="ghost-box" id="schulte-overview">未开始</div>
+            </div>
+          </div>
+
+          <div class="live-row" aria-live="polite">
+            <div class="live-chip"><span>目标数字</span><strong id="schulte-target">1</strong></div>
+            <div class="live-chip"><span>已用时间</span><strong id="schulte-timer">0.00s</strong></div>
+            <div class="live-chip"><span>完成进度</span><strong id="schulte-progress">0%</strong></div>
+          </div>
+
+          <div class="schulte-stage">
+            <div class="status" id="schulte-status">点击“开始新一局”后按从 1 开始的顺序依次点选。</div>
+            <div class="button-row">
+              <button class="primary-btn" id="schulte-start-btn">开始新一局</button>
+              <button class="secondary-btn" id="schulte-reset-btn">重置棋盘</button>
+            </div>
+            <div class="schulte-board" id="schulte-board" aria-label="舒尔特方格棋盘"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="tback-card" role="tabpanel" aria-labelledby="nav-tback-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>T-Back / N-Back</h2>
+            <p>按固定节奏出现字母。如果当前字母和 N 步之前相同，就点一次“匹配”。</p>
+          </div>
+          <div class="badge">记忆</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="tback-level">级别 N</label>
+              <select id="tback-level">
+                <option value="2" selected>2-Back</option>
+                <option value="3">3-Back</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="tback-rounds">轮次数</label>
+              <select id="tback-rounds">
+                <option value="18">18 轮</option>
+                <option value="24" selected>24 轮</option>
+                <option value="30">30 轮</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="tback-interval">节奏速度</label>
+            <select id="tback-interval">
+              <option value="2200">慢速 · 2.2 秒</option>
+              <option value="1800" selected>标准 · 1.8 秒</option>
+              <option value="1400">快速 · 1.4 秒</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="tback-start-btn">开始训练</button>
+            <button class="accent-btn" id="tback-match-btn" disabled>匹配</button>
+          </div>
+
+          <div class="tback-stage">
+            <div class="memory-plate" aria-live="polite">
+              <div>
+                <div class="memory-symbol" id="tback-symbol">-</div>
+                <div class="memory-hint" id="tback-hint">准备好后开始，按“匹配”来标记与 N 步前相同的字母。</div>
+              </div>
+            </div>
+            <div class="progress-bar" aria-hidden="true">
+              <div class="progress-fill" id="tback-progress"></div>
+            </div>
+            <div class="live-row">
+              <div class="live-chip"><span>当前轮次</span><strong id="tback-step">0 / 0</strong></div>
+              <div class="live-chip"><span>命中率</span><strong id="tback-accuracy">0%</strong></div>
+              <div class="live-chip"><span>误报数</span><strong id="tback-false">0</strong></div>
+            </div>
+          </div>
+
+          <div class="status" id="tback-status">建议先从 2-Back 开始，保持稳定节奏，不要抢点。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="stroop-card" role="tabpanel" aria-labelledby="nav-stroop-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>Stroop 斯特鲁普</h2>
+            <p>文字内容会干扰你的判断。你的任务不是读字，而是判断文字真正显示出来的颜色。</p>
+          </div>
+          <div class="badge">抑制</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="stroop-rounds">轮次数</label>
+              <select id="stroop-rounds">
+                <option value="16">16 轮</option>
+                <option value="24" selected>24 轮</option>
+                <option value="32">32 轮</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>当前规则</label>
+              <div class="ghost-box" id="stroop-rule">看字体颜色，不看文字内容</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="stroop-start-btn">开始测试</button>
+          </div>
+
+          <div class="stroop-display" id="stroop-display" aria-live="polite">
+            <div>
+              <div class="stroop-word" id="stroop-word">准备</div>
+              <div class="memory-hint" id="stroop-hint">点击开始后，按文字显示的颜色作答。</div>
+            </div>
+          </div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="stroop-progress"></div>
+          </div>
+
+          <div class="color-grid" id="stroop-options"></div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前轮次</span><strong id="stroop-step">0 / 24</strong></div>
+            <div class="live-chip"><span>正确率</span><strong id="stroop-accuracy">0%</strong></div>
+            <div class="live-chip"><span>平均反应</span><strong id="stroop-avg-rt">-</strong></div>
+          </div>
+
+          <div class="status" id="stroop-status">建议一开始先求稳，不要被字义带跑。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="gonogo-card" role="tabpanel" aria-labelledby="nav-gonogo-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>Go / No-Go</h2>
+            <p>看到 <strong>GO</strong> 时出手，看到 <strong>NO-GO</strong> 时必须忍住。重点是抑制冲动，不是乱按。</p>
+          </div>
+          <div class="badge">克制</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="gonogo-rounds">轮次数</label>
+              <select id="gonogo-rounds">
+                <option value="20">20 轮</option>
+                <option value="30" selected>30 轮</option>
+                <option value="40">40 轮</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="gonogo-interval">节奏速度</label>
+              <select id="gonogo-interval">
+                <option value="1300">慢速 · 1.3 秒</option>
+                <option value="1000" selected>标准 · 1.0 秒</option>
+                <option value="800">快速 · 0.8 秒</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="gonogo-start-btn">开始训练</button>
+            <button class="accent-btn" id="gonogo-act-btn" disabled>出手</button>
+          </div>
+
+          <div class="gng-display" id="gonogo-display" aria-live="polite">
+            <div>
+              <div class="gng-symbol" id="gonogo-symbol">-</div>
+              <div class="memory-hint" id="gonogo-hint">看到 GO 再按“出手”，NO-GO 必须忍住。</div>
+            </div>
+          </div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="gonogo-progress"></div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前轮次</span><strong id="gonogo-step">0 / 30</strong></div>
+            <div class="live-chip"><span>总准确率</span><strong id="gonogo-accuracy">0%</strong></div>
+            <div class="live-chip"><span>抑制成功率</span><strong id="gonogo-inhibition">-</strong></div>
+          </div>
+
+          <div class="status" id="gonogo-status">先看清刺激，再决定是否出手。误按比慢一点更伤成绩。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="antisaccade-card" role="tabpanel" aria-labelledby="nav-antisaccade-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>反扫视训练</h2>
+            <p>侧边刺激一出现，先把视线甩向反方向，再回到中间定住，最后点击你看的那一侧完成记录。</p>
+          </div>
+          <div class="badge">眼控</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="antisaccade-rounds">轮次数</label>
+              <select id="antisaccade-rounds">
+                <option value="12">12 轮</option>
+                <option value="18" selected>18 轮</option>
+                <option value="24">24 轮</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>当前规则</label>
+              <div class="ghost-box">侧边刺激出现 -> 看反方向 -> 回中 -> 点相反侧</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="antisaccade-start-btn">开始训练</button>
+          </div>
+
+          <div class="saccade-board" aria-live="polite">
+            <button class="saccade-node" id="antisaccade-left-btn" type="button" disabled>
+              <span class="saccade-symbol" id="antisaccade-left-symbol">◐</span>
+              <span class="tiny">左侧图案</span>
+            </button>
+            <div class="saccade-node center" id="antisaccade-center-node">
+              <span class="saccade-symbol" id="antisaccade-center-symbol">◎</span>
+              <span class="tiny">回到中心</span>
+            </div>
+            <button class="saccade-node" id="antisaccade-right-btn" type="button" disabled>
+              <span class="saccade-symbol" id="antisaccade-right-symbol">◑</span>
+              <span class="tiny">右侧图案</span>
+            </button>
+          </div>
+
+          <div class="memory-hint" id="antisaccade-hint">看到哪边动，就先看反方向，再把视线带回中间，最后点击你看的那一侧。</div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="antisaccade-progress"></div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前轮次</span><strong id="antisaccade-step">0 / 18</strong></div>
+            <div class="live-chip"><span>正确率</span><strong id="antisaccade-accuracy">0%</strong></div>
+            <div class="live-chip"><span>平均响应</span><strong id="antisaccade-avg">-</strong></div>
+          </div>
+
+          <div class="status" id="antisaccade-status">重点不是快按，而是先完成“反方向看一眼，再回中心”的动作序列。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="focus-card" role="tabpanel" aria-labelledby="nav-focus-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>凝视专注抗干扰</h2>
+            <p>先做基于 Troxler / MIB 视错觉的热身：中心绿点位于等边三角黄点中心，外围粗线红色图阵始终存在，只通过稳定注视与缓慢旋转增强主观淡化；再切到红点抗干扰阶段，周围会不断出现动态干扰项。</p>
+          </div>
+          <div class="badge">定视</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="focus-warmup">热身时长</label>
+              <select id="focus-warmup">
+                <option value="12000">12 秒</option>
+                <option value="18000" selected>18 秒</option>
+                <option value="25000">25 秒</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="focus-challenge">抗干扰时长</label>
+              <select id="focus-challenge">
+                <option value="20000">20 秒</option>
+                <option value="30000" selected>30 秒</option>
+                <option value="45000">45 秒</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="focus-intensity">干扰强度</label>
+              <select id="focus-intensity">
+                <option value="gentle">柔和</option>
+                <option value="standard" selected>标准</option>
+                <option value="intense">猛烈</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>当前流程</label>
+              <div class="ghost-box">绿点热身 -> 红点抗干扰 -> 完成后自动写入记录</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="focus-start-btn" type="button">开始双阶段训练</button>
+            <button class="secondary-btn" id="focus-stop-btn" type="button" disabled>提前结束</button>
+            <button class="inline-btn" id="focus-fullscreen-btn" type="button" aria-pressed="false">训练画面全屏</button>
+          </div>
+
+          <div class="focus-stage" id="focus-stage">
+            <div class="focus-stage-overlay">
+              <button class="focus-stage-exit-btn" id="focus-fullscreen-exit-btn" type="button">退出全屏</button>
+            </div>
+
+            <div class="focus-arena" id="focus-arena" aria-live="polite">
+              <div class="focus-layer focus-warmup-layer" id="focus-warmup-layer" aria-hidden="true">
+                <div class="focus-troxler-scene">
+                  <div class="focus-troxler-grid-shell" id="focus-troxler-grid-shell">
+                    <div class="focus-troxler-grid" id="focus-troxler-grid"></div>
+                  </div>
+                  <div class="focus-troxler-triangle" id="focus-troxler-triangle">
+                    <div class="focus-anchor-dot anchor-top"></div>
+                    <div class="focus-anchor-dot anchor-left"></div>
+                    <div class="focus-anchor-dot anchor-right"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="focus-layer focus-distractor-layer" id="focus-distractor-layer"></div>
+              <div class="focus-center-wrap">
+                <div class="focus-crosshair"></div>
+                <div class="focus-fixation-dot" id="focus-center-dot"></div>
+              </div>
+            </div>
+
+            <div class="focus-caption" id="focus-caption">先盯住中心绿点，不要来回确认外围黄点。它们和红色图阵始终都在。</div>
+          </div>
+
+          <div class="memory-hint" id="focus-hint">热身阶段请稳盯中心绿点，不要检查外围黄点还在不在。训练中尽量不要碰画面。</div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="focus-progress"></div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前阶段</span><strong id="focus-phase">未开始</strong></div>
+            <div class="live-chip"><span>阶段剩余</span><strong id="focus-countdown">-</strong></div>
+            <div class="live-chip"><span>干扰波次</span><strong id="focus-waves">0</strong></div>
+            <div class="live-chip"><span>触碰中断</span><strong id="focus-breaks">0</strong></div>
+          </div>
+
+          <div class="status" id="focus-status">热身会依赖真实的视觉适应错觉，不会由程序定时把黄点或图阵隐藏。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="reaction-card" role="tabpanel" aria-labelledby="nav-reaction-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>反应时训练</h2>
+            <p>一次开始可连续完成多轮。每轮都要先等待，再在颜色变绿时尽快点击；过早点击会判定为抢跑并重来。</p>
+          </div>
+          <div class="badge">速度</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="reaction-rounds">轮次数</label>
+              <select id="reaction-rounds">
+                <option value="5">5 轮</option>
+                <option value="8" selected>8 轮</option>
+                <option value="12">12 轮</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>训练方式</label>
+              <div class="ghost-box">开始一次，自动连续多轮</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="reaction-start-btn">开始整组测试</button>
+          </div>
+
+          <div class="reaction-zone" id="reaction-zone" tabindex="0" role="button" aria-live="polite">
+            <div>
+              <h3 id="reaction-title">等待开始</h3>
+              <p class="memory-hint" id="reaction-text">点击“开始整组测试”，看到绿色后立刻点这里。</p>
+            </div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前轮次</span><strong id="reaction-step">0 / 8</strong></div>
+            <div class="live-chip"><span>最近成绩</span><strong id="reaction-last">-</strong></div>
+            <div class="live-chip"><span>会话平均</span><strong id="reaction-avg">-</strong></div>
+            <div class="live-chip"><span>历史最佳</span><strong id="reaction-best">-</strong></div>
+            <div class="live-chip"><span>抢跑次数</span><strong id="reaction-false-count">0</strong></div>
+          </div>
+
+          <div class="status" id="reaction-status">点击“开始整组测试”后请耐心等待颜色切换。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="sustained-card" role="tabpanel" aria-labelledby="nav-sustained-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>持续注意力训练</h2>
+            <p>系统会从 26 个字母与 +、-、%、# 中混合呈现刺激。只有出现你设定的目标字母时才点，其他字母和符号都不要点。</p>
+          </div>
+          <div class="badge">警觉</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="sustained-rounds">刺激数量</label>
+              <select id="sustained-rounds">
+                <option value="48">48 个</option>
+                <option value="72" selected>72 个</option>
+                <option value="96">96 个</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sustained-interval">呈现节奏</label>
+              <select id="sustained-interval">
+                <option value="700">快节奏</option>
+                <option value="900" selected>标准</option>
+                <option value="1200">慢节奏</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="sustained-pool-size">目标字母个数</label>
+              <select id="sustained-pool-size">
+                <option value="1" selected>1 个</option>
+                <option value="2">2 个</option>
+                <option value="3">3 个</option>
+                <option value="4">4 个</option>
+                <option value="5">5 个</option>
+                <option value="6">6 个</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="sustained-letters">目标字母</label>
+              <input id="sustained-letters" type="text" inputmode="latin" autocomplete="off" spellcheck="false" value="X" placeholder="例如 X 或 A S X">
+              <div class="tiny">可用空格、逗号或直接连写，例如 `X`、`A S X`、`ASX`。</div>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label>当前规则</label>
+              <div class="ghost-box">只有目标字母出现时才点，其他字母和符号都不点</div>
+            </div>
+            <div class="field">
+              <label>当前目标字母</label>
+              <div class="ghost-box" id="sustained-pool">当前目标字母：X</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="sustained-start-btn">开始持续注意力训练</button>
+          </div>
+
+          <div class="sustained-zone" id="sustained-zone" tabindex="0" role="button" aria-live="polite">
+            <div class="sustained-stimulus" id="sustained-stimulus">准备</div>
+            <div class="sustained-subtext" id="sustained-text">点击开始后，字符会连续出现。看到目标字母就点这里，看到其他字母或符号就保持不动。</div>
+          </div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="sustained-progress"></div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前刺激</span><strong id="sustained-step">0 / 72</strong></div>
+            <div class="live-chip"><span>总准确率</span><strong id="sustained-accuracy">0%</strong></div>
+            <div class="live-chip"><span>平均反应</span><strong id="sustained-avg-rt">-</strong></div>
+            <div class="live-chip"><span>漏按</span><strong id="sustained-misses">0</strong></div>
+            <div class="live-chip"><span>误按</span><strong id="sustained-false">0</strong></div>
+          </div>
+
+          <div class="status" id="sustained-status">保持一条规则即可：只有目标字母点，其他字母和符号都别点。开始后会自动连续呈现整组刺激。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card" id="breath-card" role="tabpanel" aria-labelledby="nav-breath-card" aria-hidden="true" hidden>
+        <div class="section-head">
+          <div>
+            <h2>抑制呼吸与节拍慢运动</h2>
+            <p>跟着节拍器轻点屏幕，把呼吸和动作都压慢。固定 1 拍 = 1 秒，吸气 4 拍，呼气 6 拍，整组会连续循环。</p>
+          </div>
+          <div class="badge">节律</div>
+        </div>
+
+        <div class="controls">
+          <div class="field-grid">
+            <div class="field">
+              <label for="breath-cycles">循环轮数</label>
+              <select id="breath-cycles">
+                <option value="4">4 轮</option>
+                <option value="6" selected>6 轮</option>
+                <option value="8">8 轮</option>
+                <option value="10">10 轮</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="breath-cue-mode">提示方式</label>
+              <select id="breath-cue-mode">
+                <option value="audio" selected>节拍音 + 视觉</option>
+                <option value="visual">仅视觉</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label>当前节奏</label>
+              <div class="ghost-box">吸气 4 秒 -> 呼气 6 秒 -> 自动循环</div>
+            </div>
+            <div class="field">
+              <label>动作要求</label>
+              <div class="ghost-box">每拍轻点一次即可，动作越小越好，不用猛点</div>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button class="primary-btn" id="breath-start-btn">开始节拍跟练</button>
+            <button class="secondary-btn" id="breath-stop-btn" disabled>提前结束</button>
+          </div>
+
+          <div class="breath-zone" id="breath-zone" tabindex="0" role="button" aria-live="polite">
+            <div class="breath-orb" id="breath-orb">
+              <div class="breath-word" id="breath-word">准备</div>
+            </div>
+            <div class="breath-track" id="breath-track" aria-hidden="true"></div>
+            <div class="breath-cycle-note" id="breath-subtext">点击开始后，跟着每一拍轻点一下，吸 4 秒，呼 6 秒。</div>
+          </div>
+
+          <div class="progress-bar" aria-hidden="true">
+            <div class="progress-fill" id="breath-progress"></div>
+          </div>
+
+          <div class="live-row">
+            <div class="live-chip"><span>当前阶段</span><strong id="breath-phase">未开始</strong></div>
+            <div class="live-chip"><span>当前拍</span><strong id="breath-beat">0 / 10</strong></div>
+            <div class="live-chip"><span>已完成轮次</span><strong id="breath-cycles-done">0 / 6</strong></div>
+            <div class="live-chip"><span>节拍命中</span><strong id="breath-accuracy">0%</strong></div>
+            <div class="live-chip"><span>平均偏差</span><strong id="breath-avg-delta">-</strong></div>
+            <div class="live-chip"><span>漏 / 偏拍</span><strong id="breath-errors">0 / 0</strong></div>
+          </div>
+
+          <div class="status" id="breath-status">每拍轻点一次，吸气 4 拍，呼气 6 拍，动作尽量小。</div>
+        </div>
+      </article>
+
+      <article class="panel game-card record-panel" id="records-card" role="tabpanel" aria-labelledby="nav-records-card" aria-hidden="true" hidden>
+      <div class="section-head">
+        <div>
+          <h2>训练记录</h2>
+          <p>每次完成训练都会自动写入当前浏览器的本地存储。你可以导出成 JSON 备份，也可以一键清空。</p>
+        </div>
+        <div class="badge">本地</div>
+      </div>
+
+      <div class="record-actions">
+        <button class="secondary-btn" id="export-records-btn">导出记录</button>
+        <button class="warn-btn" id="clear-records-btn">清空记录</button>
+      </div>
+
+      <div class="history-list" id="history-list">
+        <div class="empty-state">暂无记录，先开始一次训练。</div>
+      </div>
+
+      <p class="footer-note">提示：如果你在 Acode 里本地打开，同一个浏览器内核通常会保留这些记录；更换应用或清缓存后数据可能会丢失，建议定期导出。</p>
+      </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STORAGE_KEY = "brainTrainingCampRecords";
+      const MAX_RECORDS = 120;
+
+      const state = {
+        records: [],
+        schulte: {
+          size: 5,
+          showSelected: true,
+          board: [],
+          next: 1,
+          startTime: null,
+          timerId: null,
+          finished: false,
+          wrongValue: null
+        },
+        tback: {
+          level: 2,
+          rounds: 24,
+          interval: 1800,
+          sequence: [],
+          currentIndex: -1,
+          timerId: null,
+          stepStartedAt: 0,
+          active: false,
+          pressedIndices: new Set(),
+          hits: 0,
+          misses: 0,
+          falseAlarms: 0,
+          targets: 0,
+          durationMs: 0
+        },
+        stroop: {
+          rounds: 24,
+          trials: [],
+          currentIndex: -1,
+          currentTrial: null,
+          optionOrder: [],
+          active: false,
+          locked: false,
+          startTime: 0,
+          trialStartedAt: 0,
+          correct: 0,
+          wrong: 0,
+          totalRt: 0
+        },
+        gonogo: {
+          rounds: 30,
+          interval: 1000,
+          sequence: [],
+          currentIndex: -1,
+          timerId: null,
+          stepStartedAt: 0,
+          active: false,
+          responses: new Map(),
+          hits: 0,
+          misses: 0,
+          falseAlarms: 0,
+          correctInhibitions: 0,
+          goCount: 0,
+          noGoCount: 0,
+          hitRtTotal: 0,
+          durationMs: 0
+        },
+        antisaccade: {
+          rounds: 18,
+          sequence: [],
+          currentIndex: -1,
+          currentStimulus: null,
+          timeoutId: null,
+          trialStartedAt: 0,
+          sessionStart: 0,
+          active: false,
+          awaitingResponse: false,
+          hits: 0,
+          wrong: 0,
+          misses: 0,
+          totalRt: 0
+        },
+        focus: {
+          warmupMs: 18000,
+          challengeMs: 30000,
+          intensity: "standard",
+          active: false,
+          phase: "idle",
+          startTime: 0,
+          phaseStartedAt: 0,
+          tickId: null,
+          phaseTimeoutId: null,
+          distractorIntervalId: null,
+          transientTimeoutIds: [],
+          waveCount: 0,
+          interruptions: 0,
+          durationMs: 0
+        },
+        reaction: {
+          status: "idle",
+          readyTime: 0,
+          timeoutId: null,
+          falseStarts: 0,
+          lastMs: null,
+          active: false,
+          rounds: 8,
+          completedRounds: 0,
+          results: [],
+          sessionStart: 0
+        },
+        sustained: {
+          rounds: 72,
+          interval: 900,
+          poolSize: 1,
+          customLetters: "X",
+          sequence: [],
+          targetLetters: [],
+          currentIndex: -1,
+          currentStimulus: null,
+          stepStartedAt: 0,
+          timeoutId: null,
+          active: false,
+          responses: new Map(),
+          hits: 0,
+          misses: 0,
+          falseAlarms: 0,
+          correctSkips: 0,
+          totalRt: 0,
+          sessionStart: 0
+        },
+        breath: {
+          cycles: 6,
+          beatMs: 1000,
+          inhaleBeats: 4,
+          exhaleBeats: 6,
+          cueMode: "audio",
+          active: false,
+          phase: "idle",
+          cycleIndex: 0,
+          beatInCycle: -1,
+          totalBeatIndex: -1,
+          startTime: 0,
+          expectedAt: 0,
+          timeoutId: null,
+          currentBeatResponse: null,
+          hits: 0,
+          misses: 0,
+          offBeats: 0,
+          totalAbsDelta: 0,
+          lastDeltaMs: null,
+          completedCycles: 0,
+          durationMs: 0,
+          cycleBeatStates: []
+        },
+        ui: {
+          activePanelId: "schulte-card"
+        }
+      };
+
+      const $ = (id) => document.getElementById(id);
+
+      const refs = {
+        sidebarToggle: $("sidebar-toggle-btn"),
+        sidebarScrim: $("sidebar-scrim"),
+        sideRail: $("side-rail"),
+        sideRailClose: $("side-rail-close-btn"),
+
+        totalSessions: $("total-sessions"),
+        totalDuration: $("total-duration"),
+        bestSchulte: $("best-schulte"),
+        bestTBack: $("best-tback"),
+        historyList: $("history-list"),
+
+        schulteSize: $("schulte-size"),
+        schulteShowSelected: $("schulte-show-selected"),
+        schulteOverview: $("schulte-overview"),
+        schulteStartBtn: $("schulte-start-btn"),
+        schulteResetBtn: $("schulte-reset-btn"),
+        schulteTarget: $("schulte-target"),
+        schulteTimer: $("schulte-timer"),
+        schulteProgress: $("schulte-progress"),
+        schulteStatus: $("schulte-status"),
+        schulteBoard: $("schulte-board"),
+
+        tbackLevel: $("tback-level"),
+        tbackRounds: $("tback-rounds"),
+        tbackInterval: $("tback-interval"),
+        tbackStartBtn: $("tback-start-btn"),
+        tbackMatchBtn: $("tback-match-btn"),
+        tbackSymbol: $("tback-symbol"),
+        tbackHint: $("tback-hint"),
+        tbackProgress: $("tback-progress"),
+        tbackStep: $("tback-step"),
+        tbackAccuracy: $("tback-accuracy"),
+        tbackFalse: $("tback-false"),
+        tbackStatus: $("tback-status"),
+
+        stroopRounds: $("stroop-rounds"),
+        stroopStartBtn: $("stroop-start-btn"),
+        stroopDisplay: $("stroop-display"),
+        stroopWord: $("stroop-word"),
+        stroopHint: $("stroop-hint"),
+        stroopOptions: $("stroop-options"),
+        stroopStep: $("stroop-step"),
+        stroopAccuracy: $("stroop-accuracy"),
+        stroopAvgRt: $("stroop-avg-rt"),
+        stroopProgress: $("stroop-progress"),
+        stroopStatus: $("stroop-status"),
+
+        gonogoRounds: $("gonogo-rounds"),
+        gonogoInterval: $("gonogo-interval"),
+        gonogoStartBtn: $("gonogo-start-btn"),
+        gonogoActBtn: $("gonogo-act-btn"),
+        gonogoDisplay: $("gonogo-display"),
+        gonogoSymbol: $("gonogo-symbol"),
+        gonogoHint: $("gonogo-hint"),
+        gonogoStep: $("gonogo-step"),
+        gonogoAccuracy: $("gonogo-accuracy"),
+        gonogoInhibition: $("gonogo-inhibition"),
+        gonogoProgress: $("gonogo-progress"),
+        gonogoStatus: $("gonogo-status"),
+
+        antisaccadeRounds: $("antisaccade-rounds"),
+        antisaccadeStartBtn: $("antisaccade-start-btn"),
+        antisaccadeLeftBtn: $("antisaccade-left-btn"),
+        antisaccadeRightBtn: $("antisaccade-right-btn"),
+        antisaccadeCenterNode: $("antisaccade-center-node"),
+        antisaccadeLeftSymbol: $("antisaccade-left-symbol"),
+        antisaccadeCenterSymbol: $("antisaccade-center-symbol"),
+        antisaccadeRightSymbol: $("antisaccade-right-symbol"),
+        antisaccadeHint: $("antisaccade-hint"),
+        antisaccadeStep: $("antisaccade-step"),
+        antisaccadeAccuracy: $("antisaccade-accuracy"),
+        antisaccadeAvg: $("antisaccade-avg"),
+        antisaccadeProgress: $("antisaccade-progress"),
+        antisaccadeStatus: $("antisaccade-status"),
+
+        focusWarmup: $("focus-warmup"),
+        focusChallenge: $("focus-challenge"),
+        focusIntensity: $("focus-intensity"),
+        focusStartBtn: $("focus-start-btn"),
+        focusStopBtn: $("focus-stop-btn"),
+        focusFullscreenBtn: $("focus-fullscreen-btn"),
+        focusFullscreenExitBtn: $("focus-fullscreen-exit-btn"),
+        focusStage: $("focus-stage"),
+        focusArena: $("focus-arena"),
+        focusTroxlerGridShell: $("focus-troxler-grid-shell"),
+        focusTroxlerGrid: $("focus-troxler-grid"),
+        focusTroxlerTriangle: $("focus-troxler-triangle"),
+        focusDistractorLayer: $("focus-distractor-layer"),
+        focusCaption: $("focus-caption"),
+        focusHint: $("focus-hint"),
+        focusPhase: $("focus-phase"),
+        focusCountdown: $("focus-countdown"),
+        focusWaves: $("focus-waves"),
+        focusBreaks: $("focus-breaks"),
+        focusProgress: $("focus-progress"),
+        focusStatus: $("focus-status"),
+
+        reactionRounds: $("reaction-rounds"),
+        reactionStartBtn: $("reaction-start-btn"),
+        reactionZone: $("reaction-zone"),
+        reactionTitle: $("reaction-title"),
+        reactionText: $("reaction-text"),
+        reactionStep: $("reaction-step"),
+        reactionLast: $("reaction-last"),
+        reactionAvg: $("reaction-avg"),
+        reactionBest: $("reaction-best"),
+        reactionFalseCount: $("reaction-false-count"),
+        reactionStatus: $("reaction-status"),
+
+        sustainedRounds: $("sustained-rounds"),
+        sustainedInterval: $("sustained-interval"),
+        sustainedPoolSize: $("sustained-pool-size"),
+        sustainedLetters: $("sustained-letters"),
+        sustainedPool: $("sustained-pool"),
+        sustainedStartBtn: $("sustained-start-btn"),
+        sustainedZone: $("sustained-zone"),
+        sustainedStimulus: $("sustained-stimulus"),
+        sustainedText: $("sustained-text"),
+        sustainedProgress: $("sustained-progress"),
+        sustainedStep: $("sustained-step"),
+        sustainedAccuracy: $("sustained-accuracy"),
+        sustainedAvgRt: $("sustained-avg-rt"),
+        sustainedMisses: $("sustained-misses"),
+        sustainedFalse: $("sustained-false"),
+        sustainedStatus: $("sustained-status"),
+
+        breathCycles: $("breath-cycles"),
+        breathCueMode: $("breath-cue-mode"),
+        breathStartBtn: $("breath-start-btn"),
+        breathStopBtn: $("breath-stop-btn"),
+        breathZone: $("breath-zone"),
+        breathOrb: $("breath-orb"),
+        breathWord: $("breath-word"),
+        breathTrack: $("breath-track"),
+        breathSubtext: $("breath-subtext"),
+        breathPhase: $("breath-phase"),
+        breathBeat: $("breath-beat"),
+        breathCyclesDone: $("breath-cycles-done"),
+        breathAccuracy: $("breath-accuracy"),
+        breathAvgDelta: $("breath-avg-delta"),
+        breathErrors: $("breath-errors"),
+        breathProgress: $("breath-progress"),
+        breathStatus: $("breath-status"),
+
+        exportBtn: $("export-records-btn"),
+        clearBtn: $("clear-records-btn")
+      };
+
+      const PANEL_IDS = [
+        "schulte-card",
+        "tback-card",
+        "stroop-card",
+        "gonogo-card",
+        "antisaccade-card",
+        "focus-card",
+        "reaction-card",
+        "sustained-card",
+        "breath-card",
+        "records-card"
+      ];
+
+      const panelTabs = Array.from(document.querySelectorAll(".quick-nav-tab"));
+      const panelMap = new Map(PANEL_IDS.map((id) => [id, $(id)]));
+
+      const STROOP_COLORS = [
+        { key: "red", label: "红", value: "#dc2626", text: "#ffffff" },
+        { key: "blue", label: "蓝", value: "#2563eb", text: "#ffffff" },
+        { key: "green", label: "绿", value: "#16a34a", text: "#ffffff" },
+        { key: "yellow", label: "黄", value: "#ca8a04", text: "#111827" },
+        { key: "purple", label: "紫", value: "#7c3aed", text: "#ffffff" }
+      ];
+
+      const FOCUS_DISTRACTORS = [
+        { symbol: "✺", className: "spark" },
+        { symbol: "◎", className: "ring" },
+        { symbol: "▤", className: "block" },
+        { symbol: "◈", className: "block" },
+        { symbol: "◢", className: "chevron" },
+        { symbol: "◣", className: "chevron" }
+      ];
+
+      const FOCUS_TROXLER_GRID_SIZE = 11;
+      const FOCUS_SLOTS = [
+        { x: 14, y: 18 },
+        { x: 30, y: 14 },
+        { x: 70, y: 16 },
+        { x: 86, y: 22 },
+        { x: 15, y: 50 },
+        { x: 84, y: 48 },
+        { x: 18, y: 78 },
+        { x: 34, y: 84 },
+        { x: 66, y: 84 },
+        { x: 82, y: 78 }
+      ];
+
+      const FOCUS_COLORS = ["#0ea5e9", "#f97316", "#ef4444", "#22c55e", "#8b5cf6", "#f59e0b"];
+      const SUSTAINED_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      const SUSTAINED_SYMBOLS = ["+", "-", "%", "#"];
+      const BREATH_TOTAL_BEATS = 10;
+      const BREATH_TAP_WINDOW_MS = 420;
+      let breathAudioContext = null;
+
+      function shuffle(list) {
+        const arr = list.slice();
+        for (let i = arr.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function formatDuration(ms) {
+        if (!Number.isFinite(ms) || ms <= 0) {
+          return "0.00s";
+        }
+        if (ms < 60000) {
+          return (ms / 1000).toFixed(2) + "s";
+        }
+        const minutes = Math.floor(ms / 60000);
+        const seconds = ((ms % 60000) / 1000).toFixed(1).padStart(4, "0");
+        return minutes + "m " + seconds + "s";
+      }
+
+      function formatShort(ms) {
+        if (!Number.isFinite(ms) || ms <= 0) {
+          return "-";
+        }
+        return Math.round(ms) + "ms";
+      }
+
+      function formatMetricMs(ms) {
+        if (!Number.isFinite(ms) || ms < 0) {
+          return "-";
+        }
+        return Math.round(ms) + "ms";
+      }
+
+      function formatCountdown(ms) {
+        if (!Number.isFinite(ms) || ms <= 0) {
+          return "0s";
+        }
+        return Math.ceil(ms / 1000) + "s";
+      }
+
+      function formatTotal(ms) {
+        if (!Number.isFinite(ms) || ms <= 0) {
+          return "0s";
+        }
+        const totalSeconds = Math.round(ms / 1000);
+        if (totalSeconds < 60) {
+          return totalSeconds + "s";
+        }
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        if (minutes < 60) {
+          return minutes + "m " + seconds + "s";
+        }
+        const hours = Math.floor(minutes / 60);
+        const remainMinutes = minutes % 60;
+        return hours + "h " + remainMinutes + "m";
+      }
+
+      function getFocusPhaseLabel(phase) {
+        if (phase === "warmup") {
+          return "热身";
+        }
+        if (phase === "challenge") {
+          return "抗干扰";
+        }
+        if (phase === "done") {
+          return "已完成";
+        }
+        if (phase === "stopped") {
+          return "已停止";
+        }
+        return "未开始";
+      }
+
+      function getBreathPhaseLabel(phase) {
+        if (phase === "ready") {
+          return "预备";
+        }
+        if (phase === "inhale") {
+          return "吸气";
+        }
+        if (phase === "exhale") {
+          return "呼气";
+        }
+        if (phase === "done") {
+          return "已完成";
+        }
+        if (phase === "stopped") {
+          return "已停止";
+        }
+        return "未开始";
+      }
+
+      function getBreathCueModeLabel(mode) {
+        return mode === "visual" ? "仅视觉" : "节拍音 + 视觉";
+      }
+
+      function getFocusIntensityConfig(intensity) {
+        if (intensity === "gentle") {
+          return { count: 3, interval: 920, life: 1100 };
+        }
+        if (intensity === "intense") {
+          return { count: 7, interval: 500, life: 1450 };
+        }
+        return { count: 5, interval: 690, life: 1280 };
+      }
+
+      function formatTimeStamp(ts) {
+        return new Date(ts).toLocaleString("zh-CN", {
+          hour12: false,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      }
+
+      function loadRecords() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          state.records = raw ? JSON.parse(raw) : [];
+        } catch (error) {
+          state.records = [];
+        }
+      }
+
+      function saveRecords() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.records));
+      }
+
+      function addRecord(record) {
+        state.records.unshift(record);
+        state.records = state.records.slice(0, MAX_RECORDS);
+        saveRecords();
+        renderRecords();
+        renderStats();
+      }
+
+      function getRecordsByGame(game) {
+        return state.records.filter((item) => item.game === game);
+      }
+
+      function renderStats() {
+        const totalDurationMs = state.records.reduce((sum, item) => sum + (item.durationMs || 0), 0);
+        refs.totalSessions.textContent = String(state.records.length);
+        refs.totalDuration.textContent = formatTotal(totalDurationMs);
+
+        const schulteRecords = getRecordsByGame("舒尔特方格");
+        const tbackRecords = getRecordsByGame("T-Back");
+        const reactionRecords = getRecordsByGame("反应时");
+
+        if (schulteRecords.length > 0) {
+          const best = Math.min(...schulteRecords.map((item) => item.durationMs));
+          refs.bestSchulte.textContent = formatDuration(best);
+        } else {
+          refs.bestSchulte.textContent = "-";
+        }
+
+        if (tbackRecords.length > 0) {
+          const best = Math.max(...tbackRecords.map((item) => item.score || 0));
+          refs.bestTBack.textContent = best.toFixed(0) + "%";
+        } else {
+          refs.bestTBack.textContent = "-";
+        }
+
+        if (reactionRecords.length > 0) {
+          const bestReaction = Math.min(...reactionRecords.map((item) => item.bestMs || item.metricMs || item.durationMs));
+          refs.reactionBest.textContent = formatShort(bestReaction);
+        } else {
+          refs.reactionBest.textContent = "-";
+        }
+
+        refs.reactionFalseCount.textContent = String(state.reaction.falseStarts);
+      }
+
+      function renderRecords() {
+        if (state.records.length === 0) {
+          refs.historyList.innerHTML = '<div class="empty-state">暂无记录，先开始一次训练。</div>';
+          return;
+        }
+
+        refs.historyList.innerHTML = state.records.slice(0, 18).map((record) => {
+          return [
+            '<div class="history-item">',
+            "<div>",
+            "<strong>" + escapeHtml(record.game) + "</strong>",
+            '<div class="history-meta">' + escapeHtml(record.summary) + "</div>",
+            "</div>",
+            '<div class="history-meta">' + escapeHtml(formatTimeStamp(record.timestamp)) + "</div>",
+            '<div class="history-meta">' + escapeHtml(record.detailText || "") + "</div>",
+            "</div>"
+          ].join("");
+        }).join("");
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function setStatus(element, message, tone) {
+        element.textContent = message;
+        element.className = "status" + (tone ? " " + tone : "");
+      }
+
+      function isSidebarDrawerMode() {
+        return window.innerWidth <= 980;
+      }
+
+      function setSidebarOpen(open) {
+        const active = !!open && isSidebarDrawerMode();
+        document.body.classList.toggle("sidebar-open", active);
+        if (refs.sidebarToggle) {
+          refs.sidebarToggle.setAttribute("aria-expanded", active ? "true" : "false");
+        }
+        if (refs.sidebarScrim) {
+          refs.sidebarScrim.setAttribute("aria-hidden", active ? "false" : "true");
+        }
+      }
+
+      function closeSidebar() {
+        setSidebarOpen(false);
+      }
+
+      function toggleSidebar() {
+        setSidebarOpen(!document.body.classList.contains("sidebar-open"));
+      }
+
+      function handleSidebarEscape(event) {
+        if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) {
+          closeSidebar();
+        }
+      }
+
+      function syncSidebarViewportMode() {
+        if (!isSidebarDrawerMode()) {
+          closeSidebar();
+        }
+      }
+
+      function initSidebar() {
+        refs.sidebarToggle.addEventListener("click", toggleSidebar);
+        refs.sideRailClose.addEventListener("click", closeSidebar);
+        refs.sidebarScrim.addEventListener("click", closeSidebar);
+        window.addEventListener("resize", syncSidebarViewportMode);
+        window.addEventListener("orientationchange", syncSidebarViewportMode);
+        document.addEventListener("keydown", handleSidebarEscape);
+        syncSidebarViewportMode();
+      }
+
+      function getPanelIdFromHash() {
+        const hash = window.location.hash.replace(/^#/, "");
+        return panelMap.has(hash) ? hash : "schulte-card";
+      }
+
+      function updatePanelHash(panelId) {
+        const nextHash = "#" + panelId;
+        if (window.location.hash === nextHash) {
+          return;
+        }
+
+        if (window.history && typeof window.history.replaceState === "function") {
+          window.history.replaceState(null, "", nextHash);
+          return;
+        }
+
+        window.location.hash = panelId;
+      }
+
+      function syncActivePanelLayout(panelId) {
+        if (panelId !== "focus-card") {
+          return;
+        }
+
+        window.requestAnimationFrame(() => {
+          refreshFocusViewportLayout();
+        });
+      }
+
+      function hasActiveSession(panelId) {
+        if (panelId === "schulte-card") {
+          return !!state.schulte.startTime && !state.schulte.finished;
+        }
+        if (panelId === "tback-card") {
+          return state.tback.active;
+        }
+        if (panelId === "stroop-card") {
+          return state.stroop.active;
+        }
+        if (panelId === "gonogo-card") {
+          return state.gonogo.active;
+        }
+        if (panelId === "antisaccade-card") {
+          return state.antisaccade.active;
+        }
+        if (panelId === "focus-card") {
+          return state.focus.active;
+        }
+        if (panelId === "reaction-card") {
+          return state.reaction.active;
+        }
+        if (panelId === "sustained-card") {
+          return state.sustained.active;
+        }
+        if (panelId === "breath-card") {
+          return state.breath.active;
+        }
+        return false;
+      }
+
+      function markPanelSwitchBlocked(panelId) {
+        if (panelId === "schulte-card") {
+          setStatus(refs.schulteStatus, "当前这一局还在进行中。先完成，或点“重置棋盘”后再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "tback-card") {
+          setStatus(refs.tbackStatus, "当前训练还在进行中。请等本组结束后再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "stroop-card") {
+          setStatus(refs.stroopStatus, "当前测试还在进行中。请先完成这组，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "gonogo-card") {
+          setStatus(refs.gonogoStatus, "当前训练还在进行中。请先完成这一组，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "antisaccade-card") {
+          setStatus(refs.antisaccadeStatus, "当前训练还在进行中。请先完成这一组，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "focus-card") {
+          setStatus(refs.focusStatus, "当前训练还在进行中。请先结束或完成本轮，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "reaction-card") {
+          setStatus(refs.reactionStatus, "当前整组测试还在进行中。请先跑完这一组，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "sustained-card") {
+          setStatus(refs.sustainedStatus, "当前训练还在进行中。请先完成整组刺激，再切换项目。", "warn");
+          return;
+        }
+        if (panelId === "breath-card") {
+          setStatus(refs.breathStatus, "当前跟练还在进行中。请先结束或完成本轮，再切换项目。", "warn");
+        }
+      }
+
+      function switchTrainingPanel(panelId, options) {
+        const config = options || {};
+        const nextPanelId = panelMap.has(panelId) ? panelId : "schulte-card";
+        const currentPanelId = state.ui.activePanelId;
+
+        if (currentPanelId && currentPanelId !== nextPanelId && hasActiveSession(currentPanelId)) {
+          markPanelSwitchBlocked(currentPanelId);
+          const currentPanel = panelMap.get(currentPanelId);
+          if (currentPanel) {
+            currentPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          return;
+        }
+
+        if (nextPanelId !== "focus-card" && typeof isFocusFullscreenActive === "function" && isFocusFullscreenActive()) {
+          exitFocusFullscreen();
+        }
+
+        state.ui.activePanelId = nextPanelId;
+
+        panelTabs.forEach((tab) => {
+          const active = tab.dataset.panelTarget === nextPanelId;
+          tab.classList.toggle("is-active", active);
+          tab.setAttribute("aria-selected", active ? "true" : "false");
+          tab.tabIndex = active ? 0 : -1;
+        });
+
+        panelMap.forEach((panel, id) => {
+          const active = id === nextPanelId;
+          panel.hidden = !active;
+          panel.classList.toggle("is-active", active);
+          panel.setAttribute("aria-hidden", active ? "false" : "true");
+        });
+
+        if (config.updateHash !== false) {
+          updatePanelHash(nextPanelId);
+        }
+
+        closeSidebar();
+        syncActivePanelLayout(nextPanelId);
+      }
+
+      function initPanelSwitcher() {
+        panelTabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            switchTrainingPanel(tab.dataset.panelTarget);
+          });
+        });
+
+        window.addEventListener("hashchange", () => {
+          switchTrainingPanel(getPanelIdFromHash(), { updateHash: false });
+        });
+
+        switchTrainingPanel(getPanelIdFromHash(), { updateHash: false });
+      }
+
+      function initSchulte() {
+        refs.schulteSize.addEventListener("change", () => {
+          state.schulte.size = Number(refs.schulteSize.value);
+          resetSchulteBoard(false);
+        });
+
+        refs.schulteShowSelected.addEventListener("change", () => {
+          state.schulte.showSelected = refs.schulteShowSelected.value !== "off";
+          renderSchulteBoard();
+        });
+
+        refs.schulteStartBtn.addEventListener("click", () => {
+          startSchulteGame();
+        });
+
+        refs.schulteResetBtn.addEventListener("click", () => {
+          resetSchulteBoard(true);
+        });
+
+        resetSchulteBoard(false);
+      }
+
+      function startSchulteGame() {
+        clearInterval(state.schulte.timerId);
+        state.schulte.startTime = performance.now();
+        state.schulte.next = 1;
+        state.schulte.finished = false;
+        state.schulte.wrongValue = null;
+        state.schulte.board = state.schulte.board.map((item) => ({
+          value: item.value,
+          done: false
+        }));
+        state.schulte.timerId = window.setInterval(() => {
+          if (!state.schulte.startTime) {
+            return;
+          }
+          refs.schulteTimer.textContent = formatDuration(performance.now() - state.schulte.startTime);
+        }, 50);
+        renderSchulteBoard();
+        updateSchulteInfo();
+        setStatus(refs.schulteStatus, "游戏开始。请从 1 按顺序点击到最后一个数字。", "");
+      }
+
+      function resetSchulteBoard(showMessage) {
+        clearInterval(state.schulte.timerId);
+        state.schulte.size = Number(refs.schulteSize.value);
+        state.schulte.showSelected = refs.schulteShowSelected.value !== "off";
+        const total = state.schulte.size * state.schulte.size;
+        state.schulte.board = shuffle(Array.from({ length: total }, (_, index) => ({
+          value: index + 1,
+          done: false
+        })));
+        state.schulte.startTime = null;
+        state.schulte.next = 1;
+        state.schulte.finished = false;
+        state.schulte.wrongValue = null;
+        refs.schulteTimer.textContent = "0.00s";
+        if (showMessage) {
+          setStatus(refs.schulteStatus, "棋盘已重置。点击“开始新一局”后开始计时。", "");
+        }
+        renderSchulteBoard();
+        updateSchulteInfo();
+      }
+
+      function updateSchulteInfo() {
+        const total = state.schulte.size * state.schulte.size;
+        const progress = ((state.schulte.next - 1) / total) * 100;
+        refs.schulteTarget.textContent = state.schulte.next <= total ? String(state.schulte.next) : "完成";
+        refs.schulteProgress.textContent = Math.round(progress) + "%";
+        refs.schulteOverview.textContent = state.schulte.startTime
+          ? "训练中"
+          : state.schulte.finished
+          ? "已完成"
+          : "未开始";
+      }
+
+      function renderSchulteBoard() {
+        refs.schulteBoard.style.gridTemplateColumns = "repeat(" + state.schulte.size + ", minmax(0, 1fr))";
+        refs.schulteBoard.innerHTML = "";
+
+        state.schulte.board.forEach((item) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "schulte-cell";
+          button.textContent = String(item.value);
+          if (item.done && state.schulte.showSelected) {
+            button.classList.add("done");
+          }
+          if (state.schulte.wrongValue === item.value) {
+            button.classList.add("wrong");
+          }
+          button.addEventListener("click", () => {
+            handleSchulteClick(item.value);
+          });
+          refs.schulteBoard.appendChild(button);
+        });
+      }
+
+      function handleSchulteClick(value) {
+        if (!state.schulte.startTime || state.schulte.finished) {
+          setStatus(refs.schulteStatus, "请先点击“开始新一局”再作答。", "warn");
+          return;
+        }
+
+        if (value !== state.schulte.next) {
+          state.schulte.wrongValue = value;
+          renderSchulteBoard();
+          window.setTimeout(() => {
+            state.schulte.wrongValue = null;
+            renderSchulteBoard();
+          }, 220);
+          setStatus(refs.schulteStatus, "点错了，当前应该点击 " + state.schulte.next + "。", "warn");
+          return;
+        }
+
+        const target = state.schulte.board.find((item) => item.value === value);
+        if (target) {
+          target.done = true;
+        }
+        state.schulte.next += 1;
+        const total = state.schulte.size * state.schulte.size;
+
+        if (value === total) {
+          finishSchulteGame();
+          return;
+        }
+
+        setStatus(refs.schulteStatus, "正确，继续寻找 " + state.schulte.next + "。", "ok");
+        renderSchulteBoard();
+        updateSchulteInfo();
+      }
+
+      function finishSchulteGame() {
+        clearInterval(state.schulte.timerId);
+        const durationMs = performance.now() - state.schulte.startTime;
+        state.schulte.startTime = null;
+        state.schulte.finished = true;
+        refs.schulteTimer.textContent = formatDuration(durationMs);
+        updateSchulteInfo();
+        renderSchulteBoard();
+        setStatus(refs.schulteStatus, "完成，用时 " + formatDuration(durationMs) + "。", "ok");
+
+        addRecord({
+          id: "schulte-" + Date.now(),
+          game: "舒尔特方格",
+          timestamp: Date.now(),
+          durationMs: Math.round(durationMs),
+          score: Number((100000 / Math.max(durationMs, 1)).toFixed(2)),
+          showSelected: state.schulte.showSelected,
+          summary: state.schulte.size + " × " + state.schulte.size + " 完成 · 点选显示" + (state.schulte.showSelected ? "开" : "关"),
+          detailText: "用时 " + formatDuration(durationMs) + " / 已点选显示" + (state.schulte.showSelected ? "开启" : "关闭")
+        });
+      }
+
+      function initTBack() {
+        refs.tbackStartBtn.addEventListener("click", startTBackGame);
+        refs.tbackMatchBtn.addEventListener("click", registerTBackMatch);
+        updateTBackPanel();
+      }
+
+      function buildTBackSequence(rounds, level) {
+        const alphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T"];
+        const seq = [];
+        for (let i = 0; i < rounds; i += 1) {
+          if (i >= level && Math.random() < 0.34) {
+            seq.push(seq[i - level]);
+          } else {
+            let next = alphabet[Math.floor(Math.random() * alphabet.length)];
+            if (i >= level && next === seq[i - level]) {
+              const alternatives = alphabet.filter((ch) => ch !== seq[i - level]);
+              next = alternatives[Math.floor(Math.random() * alternatives.length)];
+            }
+            seq.push(next);
+          }
+        }
+        return seq;
+      }
+
+      function startTBackGame() {
+        stopTBackTimers();
+        state.tback.level = Number(refs.tbackLevel.value);
+        state.tback.rounds = Number(refs.tbackRounds.value);
+        state.tback.interval = Number(refs.tbackInterval.value);
+        state.tback.sequence = buildTBackSequence(state.tback.rounds, state.tback.level);
+        state.tback.currentIndex = -1;
+        state.tback.active = true;
+        state.tback.pressedIndices = new Set();
+        state.tback.hits = 0;
+        state.tback.misses = 0;
+        state.tback.falseAlarms = 0;
+        state.tback.targets = 0;
+        state.tback.durationMs = state.tback.rounds * state.tback.interval;
+        refs.tbackMatchBtn.disabled = false;
+        refs.tbackStartBtn.disabled = true;
+        refs.tbackSymbol.textContent = "...";
+        refs.tbackHint.textContent = "训练已开始，注意当前字母与 " + state.tback.level + " 步前是否一致。";
+        setStatus(refs.tbackStatus, "训练中。只有在你判断相同时才点“匹配”。", "");
+        nextTBackStep();
+      }
+
+      function stopTBackTimers() {
+        if (state.tback.timerId) {
+          clearTimeout(state.tback.timerId);
+          state.tback.timerId = null;
+        }
+      }
+
+      function nextTBackStep() {
+        state.tback.currentIndex += 1;
+
+        if (state.tback.currentIndex >= state.tback.rounds) {
+          finishTBackGame();
+          return;
+        }
+
+        const symbol = state.tback.sequence[state.tback.currentIndex];
+        state.tback.stepStartedAt = performance.now();
+        refs.tbackSymbol.textContent = symbol;
+        refs.tbackStep.textContent = (state.tback.currentIndex + 1) + " / " + state.tback.rounds;
+        refs.tbackProgress.style.width = (((state.tback.currentIndex + 1) / state.tback.rounds) * 100).toFixed(1) + "%";
+        updateTBackPanel();
+
+        state.tback.timerId = window.setTimeout(() => {
+          evaluateCurrentTBackStep();
+          nextTBackStep();
+        }, state.tback.interval);
+      }
+
+      function registerTBackMatch() {
+        if (!state.tback.active) {
+          return;
+        }
+        state.tback.pressedIndices.add(state.tback.currentIndex);
+        refs.tbackHint.textContent = "已标记第 " + (state.tback.currentIndex + 1) + " 轮。";
+      }
+
+      function evaluateCurrentTBackStep() {
+        const i = state.tback.currentIndex;
+        const isTarget = i >= state.tback.level && state.tback.sequence[i] === state.tback.sequence[i - state.tback.level];
+        const pressed = state.tback.pressedIndices.has(i);
+
+        if (isTarget) {
+          state.tback.targets += 1;
+          if (pressed) {
+            state.tback.hits += 1;
+          } else {
+            state.tback.misses += 1;
+          }
+        } else if (pressed) {
+          state.tback.falseAlarms += 1;
+        }
+
+        updateTBackPanel();
+      }
+
+      function updateTBackPanel() {
+        const totalChecked = state.tback.hits + state.tback.misses + state.tback.falseAlarms;
+        const correct = state.tback.hits + Math.max((state.tback.currentIndex + 1) - state.tback.targets - state.tback.falseAlarms, 0);
+        const denominator = Math.max(state.tback.currentIndex + 1, 1);
+        const accuracy = Math.max(Math.min((correct / denominator) * 100, 100), 0);
+        refs.tbackAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.tbackFalse.textContent = String(state.tback.falseAlarms);
+
+        if (!state.tback.active && totalChecked === 0) {
+          refs.tbackStep.textContent = "0 / 0";
+          refs.tbackProgress.style.width = "0%";
+        }
+      }
+
+      function finishTBackGame() {
+        stopTBackTimers();
+        state.tback.active = false;
+        refs.tbackMatchBtn.disabled = true;
+        refs.tbackStartBtn.disabled = false;
+
+        const totalRounds = state.tback.rounds;
+        const correctNonTargets = totalRounds - state.tback.targets - state.tback.falseAlarms;
+        const accuracy = ((state.tback.hits + Math.max(correctNonTargets, 0)) / totalRounds) * 100;
+        refs.tbackAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.tbackHint.textContent = "训练结束。命中 " + state.tback.hits + " 次，漏报 " + state.tback.misses + " 次。";
+        setStatus(
+          refs.tbackStatus,
+          "完成，准确率 " + accuracy.toFixed(0) + "%，误报 " + state.tback.falseAlarms + " 次。",
+          accuracy >= 80 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "tback-" + Date.now(),
+          game: "T-Back",
+          timestamp: Date.now(),
+          durationMs: state.tback.durationMs,
+          score: Number(accuracy.toFixed(2)),
+          summary: state.tback.level + "-Back · " + totalRounds + " 轮",
+          detailText: "准确率 " + accuracy.toFixed(0) + "% / 误报 " + state.tback.falseAlarms
+        });
+      }
+
+      function initStroop() {
+        refs.stroopRounds.addEventListener("change", () => {
+          if (!state.stroop.active) {
+            state.stroop.rounds = Number(refs.stroopRounds.value);
+            updateStroopPanel();
+          }
+        });
+        refs.stroopStartBtn.addEventListener("click", startStroopGame);
+        renderStroopOptions([], true);
+        updateStroopPanel();
+      }
+
+      function buildStroopTrials(rounds) {
+        const trials = [];
+        for (let i = 0; i < rounds; i += 1) {
+          const wordSource = STROOP_COLORS[Math.floor(Math.random() * STROOP_COLORS.length)];
+          const congruent = Math.random() < 0.38;
+          let colorSource = wordSource;
+
+          if (!congruent) {
+            const alternatives = STROOP_COLORS.filter((item) => item.key !== wordSource.key);
+            colorSource = alternatives[Math.floor(Math.random() * alternatives.length)];
+          }
+
+          trials.push({
+            wordLabel: wordSource.label,
+            colorKey: colorSource.key,
+            colorValue: colorSource.value,
+            colorLabel: colorSource.label
+          });
+        }
+        return trials;
+      }
+
+      function renderStroopOptions(order, disabled) {
+        const choices = order.length > 0 ? order : STROOP_COLORS;
+        refs.stroopOptions.innerHTML = "";
+
+        choices.forEach((item) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "color-btn";
+          button.textContent = item.label;
+          button.style.background = item.value;
+          button.style.color = item.text;
+          button.disabled = disabled;
+          button.addEventListener("click", () => {
+            handleStroopAnswer(item.key);
+          });
+          refs.stroopOptions.appendChild(button);
+        });
+      }
+
+      function startStroopGame() {
+        state.stroop.rounds = Number(refs.stroopRounds.value);
+        state.stroop.trials = buildStroopTrials(state.stroop.rounds);
+        state.stroop.currentIndex = -1;
+        state.stroop.currentTrial = null;
+        state.stroop.active = true;
+        state.stroop.locked = false;
+        state.stroop.startTime = performance.now();
+        state.stroop.trialStartedAt = 0;
+        state.stroop.correct = 0;
+        state.stroop.wrong = 0;
+        state.stroop.totalRt = 0;
+        state.stroop.optionOrder = [];
+        refs.stroopStartBtn.disabled = true;
+        refs.stroopDisplay.className = "stroop-display";
+        refs.stroopWord.style.color = "var(--ink)";
+        refs.stroopProgress.style.width = "0%";
+        setStatus(refs.stroopStatus, "训练开始。盯住颜色，不要被文字含义误导。", "");
+        nextStroopTrial();
+      }
+
+      function nextStroopTrial() {
+        state.stroop.currentIndex += 1;
+
+        if (state.stroop.currentIndex >= state.stroop.rounds) {
+          finishStroopGame();
+          return;
+        }
+
+        state.stroop.currentTrial = state.stroop.trials[state.stroop.currentIndex];
+        state.stroop.optionOrder = shuffle(STROOP_COLORS);
+        state.stroop.locked = false;
+        state.stroop.trialStartedAt = performance.now();
+        refs.stroopWord.textContent = state.stroop.currentTrial.wordLabel;
+        refs.stroopWord.style.color = state.stroop.currentTrial.colorValue;
+        refs.stroopHint.textContent = "按显示颜色作答，第 " + (state.stroop.currentIndex + 1) + " 轮。";
+        renderStroopOptions(state.stroop.optionOrder, false);
+        updateStroopPanel();
+      }
+
+      function handleStroopAnswer(colorKey) {
+        if (!state.stroop.active || state.stroop.locked || !state.stroop.currentTrial) {
+          return;
+        }
+
+        state.stroop.locked = true;
+        const rt = performance.now() - state.stroop.trialStartedAt;
+        const isCorrect = colorKey === state.stroop.currentTrial.colorKey;
+        state.stroop.totalRt += rt;
+
+        if (isCorrect) {
+          state.stroop.correct += 1;
+          refs.stroopHint.textContent = "正确。";
+          setStatus(refs.stroopStatus, "正确，继续下一轮。", "ok");
+        } else {
+          state.stroop.wrong += 1;
+          refs.stroopHint.textContent = "正确答案是 " + state.stroop.currentTrial.colorLabel + "。";
+          setStatus(refs.stroopStatus, "答错了，正确颜色是 " + state.stroop.currentTrial.colorLabel + "。", "warn");
+        }
+
+        renderStroopOptions(state.stroop.optionOrder, true);
+        updateStroopPanel();
+
+        window.setTimeout(() => {
+          nextStroopTrial();
+        }, 260);
+      }
+
+      function updateStroopPanel() {
+        const configuredRounds = state.stroop.active ? state.stroop.rounds : Number(refs.stroopRounds.value);
+        const answered = state.stroop.correct + state.stroop.wrong;
+        const currentShown = state.stroop.active ? Math.min(state.stroop.currentIndex + 1, configuredRounds) : 0;
+        const accuracy = answered > 0 ? (state.stroop.correct / answered) * 100 : 0;
+        const avgRt = answered > 0 ? state.stroop.totalRt / answered : 0;
+
+        refs.stroopStep.textContent = currentShown + " / " + configuredRounds;
+        refs.stroopAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.stroopAvgRt.textContent = answered > 0 ? formatShort(avgRt) : "-";
+        refs.stroopProgress.style.width = (configuredRounds > 0 ? (answered / configuredRounds) * 100 : 0).toFixed(1) + "%";
+      }
+
+      function finishStroopGame() {
+        state.stroop.active = false;
+        state.stroop.locked = false;
+        refs.stroopStartBtn.disabled = false;
+
+        const answered = state.stroop.correct + state.stroop.wrong;
+        const accuracy = answered > 0 ? (state.stroop.correct / answered) * 100 : 0;
+        const avgRt = answered > 0 ? state.stroop.totalRt / answered : 0;
+        const durationMs = performance.now() - state.stroop.startTime;
+
+        refs.stroopWord.textContent = "完成";
+        refs.stroopWord.style.color = "var(--brand)";
+        refs.stroopHint.textContent = "本轮结束，重新开始可生成新的干扰序列。";
+        renderStroopOptions(state.stroop.optionOrder, true);
+        refs.stroopProgress.style.width = "100%";
+        refs.stroopStep.textContent = state.stroop.rounds + " / " + state.stroop.rounds;
+        refs.stroopAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.stroopAvgRt.textContent = answered > 0 ? formatShort(avgRt) : "-";
+        setStatus(
+          refs.stroopStatus,
+          "完成，正确率 " + accuracy.toFixed(0) + "%，平均反应 " + formatShort(avgRt) + "。",
+          accuracy >= 80 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "stroop-" + Date.now(),
+          game: "Stroop",
+          timestamp: Date.now(),
+          durationMs: Math.round(durationMs),
+          score: Number(accuracy.toFixed(2)),
+          summary: state.stroop.rounds + " 轮色词测试",
+          detailText: "正确率 " + accuracy.toFixed(0) + "% / 平均反应 " + formatShort(avgRt)
+        });
+      }
+
+      function initGoNoGo() {
+        refs.gonogoRounds.addEventListener("change", () => {
+          if (!state.gonogo.active) {
+            state.gonogo.rounds = Number(refs.gonogoRounds.value);
+            updateGoNoGoPanel();
+          }
+        });
+        refs.gonogoInterval.addEventListener("change", () => {
+          if (!state.gonogo.active) {
+            state.gonogo.interval = Number(refs.gonogoInterval.value);
+          }
+        });
+        refs.gonogoStartBtn.addEventListener("click", startGoNoGoGame);
+        refs.gonogoActBtn.addEventListener("click", registerGoNoGoResponse);
+        updateGoNoGoPanel();
+      }
+
+      function buildGoNoGoSequence(rounds) {
+        const noGoCount = Math.max(4, Math.round(rounds * 0.28));
+        const sequence = [];
+
+        for (let i = 0; i < rounds - noGoCount; i += 1) {
+          sequence.push("go");
+        }
+        for (let i = 0; i < noGoCount; i += 1) {
+          sequence.push("nogo");
+        }
+
+        return shuffle(sequence);
+      }
+
+      function stopGoNoGoTimers() {
+        if (state.gonogo.timerId) {
+          clearTimeout(state.gonogo.timerId);
+          state.gonogo.timerId = null;
+        }
+      }
+
+      function startGoNoGoGame() {
+        stopGoNoGoTimers();
+        state.gonogo.rounds = Number(refs.gonogoRounds.value);
+        state.gonogo.interval = Number(refs.gonogoInterval.value);
+        state.gonogo.sequence = buildGoNoGoSequence(state.gonogo.rounds);
+        state.gonogo.currentIndex = -1;
+        state.gonogo.stepStartedAt = 0;
+        state.gonogo.active = true;
+        state.gonogo.responses = new Map();
+        state.gonogo.hits = 0;
+        state.gonogo.misses = 0;
+        state.gonogo.falseAlarms = 0;
+        state.gonogo.correctInhibitions = 0;
+        state.gonogo.goCount = 0;
+        state.gonogo.noGoCount = 0;
+        state.gonogo.hitRtTotal = 0;
+        state.gonogo.durationMs = state.gonogo.rounds * state.gonogo.interval;
+        refs.gonogoStartBtn.disabled = true;
+        refs.gonogoActBtn.disabled = false;
+        refs.gonogoDisplay.className = "gng-display";
+        refs.gonogoProgress.style.width = "0%";
+        refs.gonogoHint.textContent = "注意刺激变化，只有 GO 才能按。";
+        setStatus(refs.gonogoStatus, "训练开始。先看清，再决定是否出手。", "");
+        nextGoNoGoStep();
+      }
+
+      function nextGoNoGoStep() {
+        state.gonogo.currentIndex += 1;
+
+        if (state.gonogo.currentIndex >= state.gonogo.rounds) {
+          finishGoNoGoGame();
+          return;
+        }
+
+        const stimulus = state.gonogo.sequence[state.gonogo.currentIndex];
+        state.gonogo.stepStartedAt = performance.now();
+        refs.gonogoDisplay.className = "gng-display " + stimulus;
+        refs.gonogoSymbol.textContent = stimulus === "go" ? "GO" : "NO-GO";
+        refs.gonogoHint.textContent = stimulus === "go"
+          ? "这一轮要出手。"
+          : "这一轮必须忍住，不要点。";
+        refs.gonogoStep.textContent = (state.gonogo.currentIndex + 1) + " / " + state.gonogo.rounds;
+        refs.gonogoProgress.style.width = (((state.gonogo.currentIndex + 1) / state.gonogo.rounds) * 100).toFixed(1) + "%";
+        updateGoNoGoPanel();
+
+        state.gonogo.timerId = window.setTimeout(() => {
+          evaluateGoNoGoStep();
+          nextGoNoGoStep();
+        }, state.gonogo.interval);
+      }
+
+      function registerGoNoGoResponse() {
+        if (!state.gonogo.active) {
+          return;
+        }
+        if (state.gonogo.responses.has(state.gonogo.currentIndex)) {
+          return;
+        }
+
+        state.gonogo.responses.set(
+          state.gonogo.currentIndex,
+          performance.now() - state.gonogo.stepStartedAt
+        );
+
+        refs.gonogoHint.textContent = "已记录你的动作。";
+      }
+
+      function evaluateGoNoGoStep() {
+        const i = state.gonogo.currentIndex;
+        const stimulus = state.gonogo.sequence[i];
+        const responded = state.gonogo.responses.has(i);
+
+        if (stimulus === "go") {
+          state.gonogo.goCount += 1;
+          if (responded) {
+            state.gonogo.hits += 1;
+            state.gonogo.hitRtTotal += state.gonogo.responses.get(i);
+          } else {
+            state.gonogo.misses += 1;
+          }
+        } else {
+          state.gonogo.noGoCount += 1;
+          if (responded) {
+            state.gonogo.falseAlarms += 1;
+          } else {
+            state.gonogo.correctInhibitions += 1;
+          }
+        }
+
+        updateGoNoGoPanel();
+      }
+
+      function updateGoNoGoPanel() {
+        const configuredRounds = state.gonogo.active ? state.gonogo.rounds : Number(refs.gonogoRounds.value);
+        const evaluated = state.gonogo.hits + state.gonogo.misses + state.gonogo.falseAlarms + state.gonogo.correctInhibitions;
+        const overall = evaluated > 0 ? ((state.gonogo.hits + state.gonogo.correctInhibitions) / evaluated) * 100 : 0;
+        const inhibition = state.gonogo.noGoCount > 0 ? (state.gonogo.correctInhibitions / state.gonogo.noGoCount) * 100 : 0;
+
+        if (!state.gonogo.active) {
+          refs.gonogoStep.textContent = "0 / " + configuredRounds;
+          refs.gonogoProgress.style.width = (configuredRounds > 0 ? (evaluated / configuredRounds) * 100 : 0).toFixed(1) + "%";
+        }
+
+        refs.gonogoAccuracy.textContent = overall.toFixed(0) + "%";
+        refs.gonogoInhibition.textContent = state.gonogo.noGoCount > 0 ? inhibition.toFixed(0) + "%" : "-";
+      }
+
+      function finishGoNoGoGame() {
+        stopGoNoGoTimers();
+        state.gonogo.active = false;
+        refs.gonogoStartBtn.disabled = false;
+        refs.gonogoActBtn.disabled = true;
+
+        const overall = ((state.gonogo.hits + state.gonogo.correctInhibitions) / state.gonogo.rounds) * 100;
+        const inhibition = state.gonogo.noGoCount > 0 ? (state.gonogo.correctInhibitions / state.gonogo.noGoCount) * 100 : 0;
+        const avgHitRt = state.gonogo.hits > 0 ? state.gonogo.hitRtTotal / state.gonogo.hits : 0;
+
+        refs.gonogoDisplay.className = "gng-display";
+        refs.gonogoSymbol.textContent = "完成";
+        refs.gonogoHint.textContent = "命中 " + state.gonogo.hits + " 次，误报 " + state.gonogo.falseAlarms + " 次。";
+        refs.gonogoAccuracy.textContent = overall.toFixed(0) + "%";
+        refs.gonogoInhibition.textContent = state.gonogo.noGoCount > 0 ? inhibition.toFixed(0) + "%" : "-";
+        refs.gonogoProgress.style.width = "100%";
+        refs.gonogoStep.textContent = state.gonogo.rounds + " / " + state.gonogo.rounds;
+        setStatus(
+          refs.gonogoStatus,
+          "完成，总准确率 " + overall.toFixed(0) + "%，抑制成功率 " + inhibition.toFixed(0) + "%。",
+          overall >= 80 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "gonogo-" + Date.now(),
+          game: "Go/No-Go",
+          timestamp: Date.now(),
+          durationMs: state.gonogo.durationMs,
+          score: Number(overall.toFixed(2)),
+          summary: state.gonogo.rounds + " 轮冲动克制",
+          detailText: "抑制率 " + inhibition.toFixed(0) + "% / GO反应 " + formatShort(avgHitRt)
+        });
+      }
+
+      function initAntiSaccade() {
+        refs.antisaccadeRounds.addEventListener("change", () => {
+          if (!state.antisaccade.active) {
+            state.antisaccade.rounds = Number(refs.antisaccadeRounds.value);
+            state.antisaccade.currentIndex = -1;
+            state.antisaccade.currentStimulus = null;
+            state.antisaccade.hits = 0;
+            state.antisaccade.wrong = 0;
+            state.antisaccade.misses = 0;
+            state.antisaccade.totalRt = 0;
+            renderAntiSaccadeBoard();
+            refs.antisaccadeHint.textContent = "看到哪边动，就先看反方向，再把视线带回中间，最后点击你看的那一侧。";
+            setStatus(refs.antisaccadeStatus, "重点不是快按，而是先完成“反方向看一眼，再回中心”的动作序列。", "");
+            updateAntiSaccadePanel();
+          }
+        });
+        refs.antisaccadeStartBtn.addEventListener("click", startAntiSaccadeGame);
+        refs.antisaccadeLeftBtn.addEventListener("click", () => {
+          handleAntiSaccadeAnswer("left");
+        });
+        refs.antisaccadeRightBtn.addEventListener("click", () => {
+          handleAntiSaccadeAnswer("right");
+        });
+        renderAntiSaccadeBoard();
+        updateAntiSaccadePanel();
+      }
+
+      function buildAntiSaccadeSequence(rounds) {
+        return Array.from({ length: rounds }, () => (Math.random() < 0.5 ? "left" : "right"));
+      }
+
+      function stopAntiSaccadeTimer() {
+        if (state.antisaccade.timeoutId) {
+          clearTimeout(state.antisaccade.timeoutId);
+          state.antisaccade.timeoutId = null;
+        }
+      }
+
+      function renderAntiSaccadeBoard(stimulusSide, answerSide, answerTone) {
+        refs.antisaccadeLeftBtn.className = "saccade-node";
+        refs.antisaccadeRightBtn.className = "saccade-node";
+        refs.antisaccadeCenterNode.className = "saccade-node center";
+        refs.antisaccadeLeftSymbol.textContent = "◐";
+        refs.antisaccadeCenterSymbol.textContent = "◎";
+        refs.antisaccadeRightSymbol.textContent = "◑";
+
+        if (stimulusSide === "left") {
+          refs.antisaccadeLeftBtn.classList.add("stimulus");
+          refs.antisaccadeLeftSymbol.textContent = "✦";
+        } else if (stimulusSide === "right") {
+          refs.antisaccadeRightBtn.classList.add("stimulus");
+          refs.antisaccadeRightSymbol.textContent = "✦";
+        }
+
+        if (answerSide === "left") {
+          refs.antisaccadeLeftBtn.classList.add(answerTone);
+        } else if (answerSide === "right") {
+          refs.antisaccadeRightBtn.classList.add(answerTone);
+        }
+      }
+
+      function startAntiSaccadeGame() {
+        stopAntiSaccadeTimer();
+        state.antisaccade.rounds = Number(refs.antisaccadeRounds.value);
+        state.antisaccade.sequence = buildAntiSaccadeSequence(state.antisaccade.rounds);
+        state.antisaccade.currentIndex = -1;
+        state.antisaccade.currentStimulus = null;
+        state.antisaccade.trialStartedAt = 0;
+        state.antisaccade.sessionStart = performance.now();
+        state.antisaccade.active = true;
+        state.antisaccade.awaitingResponse = false;
+        state.antisaccade.hits = 0;
+        state.antisaccade.wrong = 0;
+        state.antisaccade.misses = 0;
+        state.antisaccade.totalRt = 0;
+        refs.antisaccadeStartBtn.disabled = true;
+        refs.antisaccadeLeftBtn.disabled = false;
+        refs.antisaccadeRightBtn.disabled = false;
+        refs.antisaccadeProgress.style.width = "0%";
+        refs.antisaccadeHint.textContent = "刺激会出现在左右一侧。先看反方向，再回中，然后点击你看的那一侧。";
+        setStatus(refs.antisaccadeStatus, "训练开始。先做反扫视动作，再完成点击。", "");
+        nextAntiSaccadeTrial();
+      }
+
+      function nextAntiSaccadeTrial() {
+        state.antisaccade.currentIndex += 1;
+
+        if (state.antisaccade.currentIndex >= state.antisaccade.rounds) {
+          finishAntiSaccadeGame();
+          return;
+        }
+
+        state.antisaccade.currentStimulus = state.antisaccade.sequence[state.antisaccade.currentIndex];
+        state.antisaccade.awaitingResponse = true;
+        state.antisaccade.trialStartedAt = performance.now();
+        renderAntiSaccadeBoard(state.antisaccade.currentStimulus);
+        refs.antisaccadeHint.textContent = "先看反方向，再回中，然后点你看的那一侧。";
+        refs.antisaccadeProgress.style.width = (((state.antisaccade.currentIndex + 1) / state.antisaccade.rounds) * 100).toFixed(1) + "%";
+        updateAntiSaccadePanel();
+
+        state.antisaccade.timeoutId = window.setTimeout(() => {
+          if (!state.antisaccade.awaitingResponse) {
+            return;
+          }
+          state.antisaccade.awaitingResponse = false;
+          state.antisaccade.misses += 1;
+          refs.antisaccadeHint.textContent = "超时，这一轮记为未完成。";
+          setStatus(refs.antisaccadeStatus, "超时，下一轮继续。", "warn");
+          updateAntiSaccadePanel();
+          renderAntiSaccadeBoard(state.antisaccade.currentStimulus);
+          state.antisaccade.timeoutId = window.setTimeout(() => {
+            nextAntiSaccadeTrial();
+          }, 380);
+        }, 2100);
+      }
+
+      function handleAntiSaccadeAnswer(side) {
+        if (!state.antisaccade.active || !state.antisaccade.awaitingResponse) {
+          return;
+        }
+
+        stopAntiSaccadeTimer();
+        state.antisaccade.awaitingResponse = false;
+        const rt = performance.now() - state.antisaccade.trialStartedAt;
+        const correctSide = state.antisaccade.currentStimulus === "left" ? "right" : "left";
+        const isCorrect = side === correctSide;
+        state.antisaccade.totalRt += rt;
+
+        if (isCorrect) {
+          state.antisaccade.hits += 1;
+          refs.antisaccadeHint.textContent = "正确。继续保持先看反方向，再回中。";
+          setStatus(refs.antisaccadeStatus, "正确。", "ok");
+        } else {
+          state.antisaccade.wrong += 1;
+          refs.antisaccadeHint.textContent = "这轮点错了。刺激在哪边，就应该点相反侧。";
+          setStatus(refs.antisaccadeStatus, "方向选错了。", "warn");
+        }
+
+        renderAntiSaccadeBoard(state.antisaccade.currentStimulus, side, isCorrect ? "correct" : "wrong");
+        updateAntiSaccadePanel();
+
+        state.antisaccade.timeoutId = window.setTimeout(() => {
+          nextAntiSaccadeTrial();
+        }, 320);
+      }
+
+      function updateAntiSaccadePanel() {
+        const configuredRounds = state.antisaccade.active ? state.antisaccade.rounds : Number(refs.antisaccadeRounds.value);
+        const finishedCount = state.antisaccade.hits + state.antisaccade.wrong + state.antisaccade.misses;
+        const shownStep = state.antisaccade.active
+          ? Math.min(state.antisaccade.currentIndex + 1, configuredRounds)
+          : finishedCount > 0
+          ? Math.min(finishedCount, configuredRounds)
+          : 0;
+        const accuracy = finishedCount > 0 ? (state.antisaccade.hits / finishedCount) * 100 : 0;
+        const respondedCount = state.antisaccade.hits + state.antisaccade.wrong;
+        const avgRt = respondedCount > 0 ? state.antisaccade.totalRt / respondedCount : 0;
+
+        refs.antisaccadeStep.textContent = shownStep + " / " + configuredRounds;
+        refs.antisaccadeAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.antisaccadeAvg.textContent = respondedCount > 0 ? formatShort(avgRt) : "-";
+        if (!state.antisaccade.active) {
+          refs.antisaccadeProgress.style.width = (configuredRounds > 0 ? (finishedCount / configuredRounds) * 100 : 0).toFixed(1) + "%";
+        }
+      }
+
+      function finishAntiSaccadeGame() {
+        stopAntiSaccadeTimer();
+        state.antisaccade.active = false;
+        state.antisaccade.awaitingResponse = false;
+        refs.antisaccadeStartBtn.disabled = false;
+        refs.antisaccadeLeftBtn.disabled = true;
+        refs.antisaccadeRightBtn.disabled = true;
+
+        const finishedCount = state.antisaccade.hits + state.antisaccade.wrong + state.antisaccade.misses;
+        const accuracy = finishedCount > 0 ? (state.antisaccade.hits / finishedCount) * 100 : 0;
+        const respondedCount = state.antisaccade.hits + state.antisaccade.wrong;
+        const avgRt = respondedCount > 0 ? state.antisaccade.totalRt / respondedCount : 0;
+        const durationMs = performance.now() - state.antisaccade.sessionStart;
+
+        renderAntiSaccadeBoard();
+        refs.antisaccadeProgress.style.width = "100%";
+        refs.antisaccadeStep.textContent = state.antisaccade.rounds + " / " + state.antisaccade.rounds;
+        refs.antisaccadeAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.antisaccadeAvg.textContent = respondedCount > 0 ? formatShort(avgRt) : "-";
+        refs.antisaccadeHint.textContent = "这一组结束。下次开始会生成新的左右刺激顺序。";
+        setStatus(
+          refs.antisaccadeStatus,
+          "完成，正确率 " + accuracy.toFixed(0) + "%，平均响应 " + formatShort(avgRt) + "。",
+          accuracy >= 80 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "antisaccade-" + Date.now(),
+          game: "反扫视",
+          timestamp: Date.now(),
+          durationMs: Math.round(durationMs),
+          metricMs: respondedCount > 0 ? Math.round(avgRt) : 0,
+          score: Number(accuracy.toFixed(2)),
+          summary: state.antisaccade.rounds + " 轮反扫视",
+          detailText: "正确率 " + accuracy.toFixed(0) + "% / 平均响应 " + formatShort(avgRt) + " / 超时 " + state.antisaccade.misses
+        });
+      }
+
+      function appendFocusTroxlerSegment(parent, width, height, left, top, transform) {
+        const segment = document.createElement("span");
+        segment.className = "focus-troxler-seg";
+        segment.style.width = width + "px";
+        segment.style.height = height + "px";
+        segment.style.left = left;
+        segment.style.top = top;
+        segment.style.transform = transform;
+        parent.appendChild(segment);
+      }
+
+      function createFocusTroxlerMark(shape) {
+        const node = document.createElement("div");
+        node.className = "focus-troxler-mark";
+        const stroke = 3;
+        const plusSpan = 18;
+        const edgeLong = 22;
+        const edgeShort = 16;
+
+        if (shape === "shape-plus") {
+          appendFocusTroxlerSegment(node, plusSpan, stroke, "50%", "50%", "translate(-50%, -50%)");
+          appendFocusTroxlerSegment(node, stroke, plusSpan, "50%", "50%", "translate(-50%, -50%)");
+          return node;
+        }
+
+        if (shape === "shape-edge-top") {
+          appendFocusTroxlerSegment(node, edgeLong, stroke, "50%", "50%", "translate(-50%, -50%)");
+          appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, 0)");
+          return node;
+        }
+
+        if (shape === "shape-edge-bottom") {
+          appendFocusTroxlerSegment(node, edgeLong, stroke, "50%", "50%", "translate(-50%, -50%)");
+          appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, -100%)");
+          return node;
+        }
+
+        if (shape === "shape-edge-left") {
+          appendFocusTroxlerSegment(node, stroke, edgeLong, "50%", "50%", "translate(-50%, -50%)");
+          appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(0, -50%)");
+          return node;
+        }
+
+        if (shape === "shape-edge-right") {
+          appendFocusTroxlerSegment(node, stroke, edgeLong, "50%", "50%", "translate(-50%, -50%)");
+          appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(-100%, -50%)");
+          return node;
+        }
+
+        if (shape === "shape-corner-tl") {
+          appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(0, -50%)");
+          appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, 0)");
+          return node;
+        }
+
+        if (shape === "shape-corner-tr") {
+          appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(-100%, -50%)");
+          appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, 0)");
+          return node;
+        }
+
+        if (shape === "shape-corner-bl") {
+          appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(0, -50%)");
+          appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, -100%)");
+          return node;
+        }
+
+        appendFocusTroxlerSegment(node, edgeShort, stroke, "50%", "50%", "translate(-100%, -50%)");
+        appendFocusTroxlerSegment(node, stroke, edgeShort, "50%", "50%", "translate(-50%, -100%)");
+        return node;
+      }
+
+      function buildFocusWarmupScene() {
+        if (!refs.focusTroxlerGrid) {
+          return;
+        }
+
+        refs.focusTroxlerGrid.innerHTML = "";
+        const size = FOCUS_TROXLER_GRID_SIZE;
+        const step = 100 / (size - 1);
+
+        for (let row = 0; row < size; row += 1) {
+          for (let col = 0; col < size; col += 1) {
+            let shape = "shape-plus";
+
+            if (row === 0 && col === 0) {
+              shape = "shape-corner-tl";
+            } else if (row === 0 && col === size - 1) {
+              shape = "shape-corner-tr";
+            } else if (row === size - 1 && col === 0) {
+              shape = "shape-corner-bl";
+            } else if (row === size - 1 && col === size - 1) {
+              shape = "shape-corner-br";
+            } else if (row === 0) {
+              shape = "shape-edge-top";
+            } else if (row === size - 1) {
+              shape = "shape-edge-bottom";
+            } else if (col === 0) {
+              shape = "shape-edge-left";
+            } else if (col === size - 1) {
+              shape = "shape-edge-right";
+            }
+
+            const node = createFocusTroxlerMark(shape);
+            node.style.left = (col * step).toFixed(2) + "%";
+            node.style.top = (row * step).toFixed(2) + "%";
+            refs.focusTroxlerGrid.appendChild(node);
+          }
+        }
+      }
+
+      function syncFocusWarmupLayout() {
+        if (!refs.focusArena || !refs.focusTroxlerGridShell || !refs.focusTroxlerTriangle) {
+          return;
+        }
+
+        const rect = refs.focusArena.getBoundingClientRect();
+        const arenaWidth = Math.round(rect.width) || refs.focusArena.clientWidth || 0;
+        const arenaHeight = Math.round(rect.height) || refs.focusArena.clientHeight || refs.focusArena.offsetHeight || 0;
+
+        if (!arenaWidth || !arenaHeight) {
+          return;
+        }
+
+        const shellSize = Math.max(230, Math.min(Math.min(arenaWidth, arenaHeight) * 0.78, 420));
+        const triangleSide = shellSize * 0.72;
+        const triangleHeight = triangleSide * 0.8660254;
+
+        refs.focusTroxlerGridShell.style.width = Math.round(shellSize) + "px";
+        refs.focusTroxlerGridShell.style.height = Math.round(shellSize) + "px";
+        refs.focusTroxlerTriangle.style.width = Math.round(triangleSide) + "px";
+        refs.focusTroxlerTriangle.style.height = Math.round(triangleHeight) + "px";
+      }
+
+      function scheduleFocusWarmupLayoutSync() {
+        window.requestAnimationFrame(() => {
+          syncFocusWarmupLayout();
+          window.requestAnimationFrame(() => {
+            syncFocusWarmupLayout();
+          });
+        });
+      }
+
+      function getDocumentFullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+      }
+
+      function isFocusNativeFullscreen() {
+        return !!refs.focusStage && getDocumentFullscreenElement() === refs.focusStage;
+      }
+
+      function isFocusPseudoFullscreen() {
+        return !!refs.focusStage && refs.focusStage.classList.contains("is-pseudo-fullscreen");
+      }
+
+      function isFocusFullscreenActive() {
+        return isFocusNativeFullscreen() || isFocusPseudoFullscreen();
+      }
+
+      function setFocusPseudoFullscreen(active) {
+        if (!refs.focusStage) {
+          return;
+        }
+
+        refs.focusStage.classList.toggle("is-pseudo-fullscreen", active);
+        document.body.classList.toggle("focus-stage-lock", active);
+      }
+
+      function refreshFocusViewportLayout() {
+        scheduleFocusWarmupLayoutSync();
+        window.setTimeout(scheduleFocusWarmupLayoutSync, 140);
+        window.setTimeout(scheduleFocusWarmupLayoutSync, 320);
+      }
+
+      function syncFocusFullscreenUi() {
+        if (!refs.focusFullscreenBtn) {
+          return;
+        }
+
+        const active = isFocusFullscreenActive();
+        refs.focusFullscreenBtn.textContent = active ? "退出训练画面全屏" : "训练画面全屏";
+        refs.focusFullscreenBtn.setAttribute("aria-pressed", active ? "true" : "false");
+      }
+
+      function requestElementFullscreen(element) {
+        if (!element) {
+          return false;
+        }
+
+        const method = element.requestFullscreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
+        if (typeof method !== "function") {
+          return false;
+        }
+
+        try {
+          const result = method.call(element);
+          if (result && typeof result.catch === "function") {
+            result.catch(() => {
+              if (!isFocusNativeFullscreen() && !isFocusPseudoFullscreen()) {
+                setFocusPseudoFullscreen(true);
+                syncFocusFullscreenUi();
+                refreshFocusViewportLayout();
+              }
+            });
+          }
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function exitDocumentFullscreen() {
+        const method = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+        if (typeof method !== "function") {
+          return;
+        }
+
+        try {
+          method.call(document);
+        } catch (error) {
+          return;
+        }
+      }
+
+      function enterFocusFullscreen() {
+        if (!refs.focusStage) {
+          return;
+        }
+
+        const nativeRequested = requestElementFullscreen(refs.focusStage);
+        if (!nativeRequested) {
+          setFocusPseudoFullscreen(true);
+          syncFocusFullscreenUi();
+          refreshFocusViewportLayout();
+          return;
+        }
+
+        window.setTimeout(() => {
+          if (!isFocusNativeFullscreen() && !isFocusPseudoFullscreen()) {
+            setFocusPseudoFullscreen(true);
+            syncFocusFullscreenUi();
+            refreshFocusViewportLayout();
+          }
+        }, 220);
+
+        syncFocusFullscreenUi();
+        refreshFocusViewportLayout();
+      }
+
+      function exitFocusFullscreen() {
+        if (isFocusPseudoFullscreen()) {
+          setFocusPseudoFullscreen(false);
+        }
+
+        if (isFocusNativeFullscreen()) {
+          exitDocumentFullscreen();
+        }
+
+        syncFocusFullscreenUi();
+        refreshFocusViewportLayout();
+      }
+
+      function toggleFocusFullscreen() {
+        if (isFocusFullscreenActive()) {
+          exitFocusFullscreen();
+          return;
+        }
+
+        enterFocusFullscreen();
+      }
+
+      function handleFocusFullscreenChange() {
+        if (isFocusNativeFullscreen()) {
+          setFocusPseudoFullscreen(false);
+        }
+
+        syncFocusFullscreenUi();
+        refreshFocusViewportLayout();
+      }
+
+      function handleFocusFullscreenEscape(event) {
+        if (event.key !== "Escape") {
+          return;
+        }
+
+        if (isFocusPseudoFullscreen()) {
+          exitFocusFullscreen();
+        }
+      }
+
+      function initFocus() {
+        const resetWhenIdle = () => {
+          if (state.focus.active) {
+            return;
+          }
+          state.focus.warmupMs = Number(refs.focusWarmup.value);
+          state.focus.challengeMs = Number(refs.focusChallenge.value);
+          state.focus.intensity = refs.focusIntensity.value;
+          state.focus.phase = "idle";
+          state.focus.waveCount = 0;
+          state.focus.interruptions = 0;
+          state.focus.durationMs = 0;
+          resetFocusArena();
+          refs.focusHint.textContent = "热身阶段请稳盯中心绿点，不要检查外围黄点还在不在。训练中尽量不要碰画面。";
+          setStatus(refs.focusStatus, "热身会依赖真实的视觉适应错觉，不会由程序定时把黄点或图阵隐藏。", "");
+          updateFocusPanel();
+        };
+
+        buildFocusWarmupScene();
+        scheduleFocusWarmupLayoutSync();
+        refs.focusWarmup.addEventListener("change", resetWhenIdle);
+        refs.focusChallenge.addEventListener("change", resetWhenIdle);
+        refs.focusIntensity.addEventListener("change", resetWhenIdle);
+        refs.focusStartBtn.addEventListener("click", startFocusGame);
+        refs.focusStopBtn.addEventListener("click", () => {
+          if (state.focus.active) {
+            finishFocusGame(true);
+          }
+        });
+        refs.focusFullscreenBtn.addEventListener("click", toggleFocusFullscreen);
+        refs.focusFullscreenExitBtn.addEventListener("click", exitFocusFullscreen);
+        refs.focusArena.addEventListener("pointerdown", handleFocusArenaTouch);
+        window.addEventListener("resize", scheduleFocusWarmupLayoutSync);
+        document.addEventListener("fullscreenchange", handleFocusFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFocusFullscreenChange);
+        document.addEventListener("keydown", handleFocusFullscreenEscape);
+
+        resetFocusArena();
+        scheduleFocusWarmupLayoutSync();
+        syncFocusFullscreenUi();
+        updateFocusPanel();
+      }
+
+      function clearFocusTimers() {
+        if (state.focus.tickId) {
+          clearInterval(state.focus.tickId);
+          state.focus.tickId = null;
+        }
+        clearFocusPhaseTimers();
+      }
+
+      function clearFocusPhaseTimers() {
+        if (state.focus.phaseTimeoutId) {
+          clearTimeout(state.focus.phaseTimeoutId);
+          state.focus.phaseTimeoutId = null;
+        }
+        if (state.focus.distractorIntervalId) {
+          clearInterval(state.focus.distractorIntervalId);
+          state.focus.distractorIntervalId = null;
+        }
+        state.focus.transientTimeoutIds.forEach((id) => clearTimeout(id));
+        state.focus.transientTimeoutIds = [];
+      }
+
+      function resetFocusArena() {
+        refs.focusArena.className = "focus-arena";
+        refs.focusDistractorLayer.innerHTML = "";
+        refs.focusCaption.textContent = "先盯住中心绿点，不要来回确认外围黄点。它们和红色图阵始终都在。";
+        scheduleFocusWarmupLayoutSync();
+      }
+
+      function startFocusTicker() {
+        if (state.focus.tickId) {
+          clearInterval(state.focus.tickId);
+        }
+        state.focus.tickId = window.setInterval(() => {
+          updateFocusPanel();
+        }, 120);
+      }
+
+      function startFocusGame() {
+        clearFocusTimers();
+        state.focus.warmupMs = Number(refs.focusWarmup.value);
+        state.focus.challengeMs = Number(refs.focusChallenge.value);
+        state.focus.intensity = refs.focusIntensity.value;
+        state.focus.active = true;
+        state.focus.phase = "warmup";
+        state.focus.startTime = performance.now();
+        state.focus.phaseStartedAt = state.focus.startTime;
+        state.focus.waveCount = 0;
+        state.focus.interruptions = 0;
+        state.focus.durationMs = 0;
+        refs.focusStartBtn.disabled = true;
+        refs.focusStopBtn.disabled = false;
+        resetFocusArena();
+        startFocusTicker();
+        startFocusWarmup();
+      }
+
+      function startFocusWarmup() {
+        clearFocusPhaseTimers();
+        state.focus.phase = "warmup";
+        state.focus.phaseStartedAt = performance.now();
+        refs.focusArena.className = "focus-arena warmup";
+        scheduleFocusWarmupLayoutSync();
+        refs.focusCaption.textContent = "只盯住中间绿点，不要来回确认三个黄点。红色图阵会缓慢转动，但所有元素始终都在。";
+        refs.focusHint.textContent = "热身阶段：三个黄点固定成等边三角，外围粗线图阵不会被程序删除。若定视稳定，黄点可能在主观上淡化甚至短暂消失。";
+        setStatus(refs.focusStatus, "热身开始。让消逝来自视觉适应，而不是由代码定时触发。", "");
+
+        state.focus.phaseTimeoutId = window.setTimeout(() => {
+          startFocusChallenge();
+        }, state.focus.warmupMs);
+        updateFocusPanel();
+      }
+
+      function startFocusChallenge() {
+        clearFocusPhaseTimers();
+
+        state.focus.phase = "challenge";
+        state.focus.phaseStartedAt = performance.now();
+        refs.focusArena.className = "focus-arena challenge";
+        scheduleFocusWarmupLayoutSync();
+        refs.focusCaption.textContent = "旁边会动，但你的视线只留在中心红点。";
+        refs.focusHint.textContent = "抗干扰阶段：别追闪动、跳动、旋转的图案，始终看红点。";
+        setStatus(refs.focusStatus, "抗干扰开始。训练中尽量不要碰画面。", "");
+
+        const config = getFocusIntensityConfig(state.focus.intensity);
+        spawnFocusDistractorWave(config);
+        state.focus.distractorIntervalId = window.setInterval(() => {
+          spawnFocusDistractorWave(config);
+        }, config.interval);
+        state.focus.phaseTimeoutId = window.setTimeout(() => {
+          finishFocusGame(false);
+        }, state.focus.challengeMs);
+        updateFocusPanel();
+      }
+
+      function spawnFocusDistractorWave(config) {
+        if (!state.focus.active || state.focus.phase !== "challenge") {
+          return;
+        }
+
+        const slots = shuffle(FOCUS_SLOTS).slice(0, config.count);
+        state.focus.waveCount += 1;
+
+        slots.forEach((slot, index) => {
+          const distractor = FOCUS_DISTRACTORS[Math.floor(Math.random() * FOCUS_DISTRACTORS.length)];
+          const motionClass = Math.random() < 0.5 ? "sweep" : "spin";
+          const node = document.createElement("div");
+          const x = slot.x + (Math.random() * 8 - 4);
+          const y = slot.y + (Math.random() * 8 - 4);
+          const driftX = (Math.random() < 0.5 ? -1 : 1) * (18 + Math.random() * 34);
+          const driftY = (Math.random() < 0.5 ? -1 : 1) * (12 + Math.random() * 30);
+          const duration = config.life + Math.random() * 260;
+
+          node.className = "focus-distractor " + distractor.className + " " + motionClass;
+          node.textContent = distractor.symbol;
+          node.style.left = x.toFixed(1) + "%";
+          node.style.top = y.toFixed(1) + "%";
+          node.style.fontSize = (26 + Math.random() * 24).toFixed(0) + "px";
+          node.style.color = FOCUS_COLORS[Math.floor(Math.random() * FOCUS_COLORS.length)];
+          node.style.setProperty("--dx", driftX.toFixed(0) + "px");
+          node.style.setProperty("--dy", driftY.toFixed(0) + "px");
+          node.style.setProperty("--rot", (Math.random() * 120 - 60).toFixed(0) + "deg");
+          node.style.setProperty("--scale-end", (0.92 + Math.random() * 0.42).toFixed(2));
+          node.style.setProperty("--dur", duration.toFixed(0) + "ms");
+          node.style.animationDelay = (index * 35).toFixed(0) + "ms";
+          refs.focusDistractorLayer.appendChild(node);
+
+          const timeoutId = window.setTimeout(() => {
+            node.remove();
+          }, duration + 120);
+          state.focus.transientTimeoutIds.push(timeoutId);
+        });
+
+        refs.focusWaves.textContent = String(state.focus.waveCount);
+      }
+
+      function handleFocusArenaTouch(event) {
+        if (!state.focus.active) {
+          return;
+        }
+
+        event.preventDefault();
+        state.focus.interruptions += 1;
+        refs.focusArena.classList.remove("disturbed");
+        void refs.focusArena.offsetWidth;
+        refs.focusArena.classList.add("disturbed");
+        refs.focusHint.textContent = state.focus.phase === "warmup"
+          ? "记录到一次触碰。把视线重新锁回中心绿点，不要回头确认黄点。"
+          : "记录到一次触碰。把视线重新锁回中心红点。";
+        setStatus(refs.focusStatus, "记录到一次触碰中断。继续凝视中心。", "warn");
+        refs.focusBreaks.textContent = String(state.focus.interruptions);
+      }
+
+      function updateFocusPanel() {
+        const configuredWarmup = state.focus.active ? state.focus.warmupMs : Number(refs.focusWarmup.value);
+        const configuredChallenge = state.focus.active ? state.focus.challengeMs : Number(refs.focusChallenge.value);
+        const totalConfigured = Math.max(configuredWarmup + configuredChallenge, 1);
+        let phaseLabel = getFocusPhaseLabel(state.focus.phase);
+        let countdown = "-";
+        let progress = 0;
+
+        if (state.focus.active) {
+          const phaseDuration = state.focus.phase === "warmup" ? configuredWarmup : configuredChallenge;
+          const phaseElapsed = performance.now() - state.focus.phaseStartedAt;
+          const totalElapsed = performance.now() - state.focus.startTime;
+          countdown = formatCountdown(Math.max(phaseDuration - phaseElapsed, 0));
+          progress = Math.min(totalElapsed / totalConfigured, 1);
+        } else if (state.focus.phase === "done") {
+          countdown = "0s";
+          progress = 1;
+        } else if (state.focus.phase === "stopped") {
+          countdown = "已停";
+          progress = Math.min(state.focus.durationMs / totalConfigured, 1);
+        } else {
+          phaseLabel = "未开始";
+        }
+
+        refs.focusPhase.textContent = phaseLabel;
+        refs.focusCountdown.textContent = countdown;
+        refs.focusWaves.textContent = String(state.focus.waveCount);
+        refs.focusBreaks.textContent = String(state.focus.interruptions);
+        refs.focusProgress.style.width = (progress * 100).toFixed(1) + "%";
+      }
+
+      function finishFocusGame(aborted) {
+        clearFocusTimers();
+        state.focus.durationMs = state.focus.startTime ? performance.now() - state.focus.startTime : 0;
+        state.focus.active = false;
+        state.focus.phase = aborted ? "stopped" : "done";
+        refs.focusStartBtn.disabled = false;
+        refs.focusStopBtn.disabled = true;
+        resetFocusArena();
+        refs.focusArena.className = "focus-arena done";
+
+        if (aborted) {
+          refs.focusCaption.textContent = "训练已提前结束，可重新开始。";
+          refs.focusHint.textContent = "本次已停止，未写入记录。";
+          setStatus(refs.focusStatus, "已提前结束，当前这次不写入记录。", "warn");
+          updateFocusPanel();
+          return;
+        }
+
+        const intensityLabel = state.focus.intensity === "gentle"
+          ? "柔和"
+          : state.focus.intensity === "intense"
+          ? "猛烈"
+          : "标准";
+        const score = Math.max(
+          0,
+          Math.min(
+            100,
+            100 - state.focus.interruptions * 12 + (state.focus.intensity === "intense" ? 6 : state.focus.intensity === "gentle" ? -4 : 0)
+          )
+        );
+
+        refs.focusCaption.textContent = "两阶段完成，重新开始会生成新的干扰节奏。";
+        refs.focusHint.textContent = "本次完成后已经写入本地记录。";
+        setStatus(
+          refs.focusStatus,
+          "完成，热身 " + formatDuration(state.focus.warmupMs) + "，抗干扰 " + formatDuration(state.focus.challengeMs) + "。",
+          "ok"
+        );
+        updateFocusPanel();
+
+        addRecord({
+          id: "focus-" + Date.now(),
+          game: "凝视专注抗干扰",
+          timestamp: Date.now(),
+          durationMs: Math.round(state.focus.durationMs),
+          score: Number(score.toFixed(2)),
+          summary: formatDuration(state.focus.warmupMs) + " 热身 + " + formatDuration(state.focus.challengeMs) + " 抗干扰",
+          detailText: "强度 " + intensityLabel + " / 干扰波次 " + state.focus.waveCount + " / 触碰中断 " + state.focus.interruptions
+        });
+      }
+
+      function initReaction() {
+        refs.reactionRounds.addEventListener("change", () => {
+          if (!state.reaction.active) {
+            state.reaction.rounds = Number(refs.reactionRounds.value);
+            state.reaction.status = "idle";
+            state.reaction.falseStarts = 0;
+            state.reaction.lastMs = null;
+            state.reaction.completedRounds = 0;
+            state.reaction.results = [];
+            refs.reactionZone.className = "reaction-zone";
+            refs.reactionTitle.textContent = "等待开始";
+            refs.reactionText.textContent = "点击“开始整组测试”，看到绿色后立刻点这里。";
+            setStatus(refs.reactionStatus, "点击“开始整组测试”后请耐心等待颜色切换。", "");
+            updateReactionPanel();
+          }
+        });
+        refs.reactionStartBtn.addEventListener("click", startReactionSession);
+        refs.reactionZone.addEventListener("click", handleReactionTap);
+        refs.reactionZone.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleReactionTap();
+          }
+        });
+        updateReactionPanel();
+      }
+
+      function clearReactionTimer() {
+        if (state.reaction.timeoutId) {
+          clearTimeout(state.reaction.timeoutId);
+          state.reaction.timeoutId = null;
+        }
+      }
+
+      function startReactionSession() {
+        clearReactionTimer();
+        state.reaction.rounds = Number(refs.reactionRounds.value);
+        state.reaction.active = true;
+        state.reaction.status = "idle";
+        state.reaction.falseStarts = 0;
+        state.reaction.lastMs = null;
+        state.reaction.completedRounds = 0;
+        state.reaction.results = [];
+        state.reaction.sessionStart = performance.now();
+        refs.reactionStartBtn.disabled = true;
+        refs.reactionZone.className = "reaction-zone";
+        refs.reactionTitle.textContent = "准备开始";
+        refs.reactionText.textContent = "整组测试开始后会自动连续多轮。";
+        setStatus(refs.reactionStatus, "测试开始。每轮看到绿色后再点。", "");
+        updateReactionPanel();
+        queueReactionRound(400);
+      }
+
+      function queueReactionRound(delayMs) {
+        clearReactionTimer();
+        state.reaction.timeoutId = window.setTimeout(() => {
+          prepareReactionRound();
+        }, delayMs);
+      }
+
+      function prepareReactionRound() {
+        if (!state.reaction.active) {
+          return;
+        }
+
+        if (state.reaction.completedRounds >= state.reaction.rounds) {
+          finishReactionSession();
+          return;
+        }
+
+        state.reaction.status = "waiting";
+        refs.reactionZone.className = "reaction-zone waiting";
+        refs.reactionTitle.textContent = "第 " + (state.reaction.completedRounds + 1) + " 轮";
+        refs.reactionText.textContent = "现在不要点，等它变绿。";
+        updateReactionPanel();
+
+        const delay = 1400 + Math.random() * 2200;
+        clearReactionTimer();
+        state.reaction.timeoutId = window.setTimeout(() => {
+          state.reaction.status = "ready";
+          state.reaction.readyTime = performance.now();
+          refs.reactionZone.className = "reaction-zone ready";
+          refs.reactionTitle.textContent = "第 " + (state.reaction.completedRounds + 1) + " 轮";
+          refs.reactionText.textContent = "现在点，越快越好。";
+        }, delay);
+      }
+
+      function handleReactionTap() {
+        refs.reactionZone.classList.add("pressed");
+        window.setTimeout(() => {
+          refs.reactionZone.classList.remove("pressed");
+        }, 100);
+
+        if (!state.reaction.active) {
+          return;
+        }
+
+        if (state.reaction.status === "waiting") {
+          clearReactionTimer();
+          state.reaction.status = "resetting";
+          state.reaction.falseStarts += 1;
+          refs.reactionZone.className = "reaction-zone";
+          refs.reactionTitle.textContent = "抢跑了";
+          refs.reactionText.textContent = "你点早了，这一轮将重来。";
+          setStatus(refs.reactionStatus, "抢跑，这一轮重来。", "warn");
+          updateReactionPanel();
+          queueReactionRound(650);
+          return;
+        }
+
+        if (state.reaction.status !== "ready") {
+          return;
+        }
+
+        const reactionMs = performance.now() - state.reaction.readyTime;
+        state.reaction.status = "resting";
+        state.reaction.lastMs = Math.round(reactionMs);
+        state.reaction.completedRounds += 1;
+        state.reaction.results.push(Math.round(reactionMs));
+        refs.reactionLast.textContent = formatShort(reactionMs);
+        refs.reactionZone.className = "reaction-zone";
+        refs.reactionTitle.textContent = "本轮完成";
+        refs.reactionText.textContent = "本次反应 " + formatShort(reactionMs) + "。";
+        setStatus(
+          refs.reactionStatus,
+          "已记录第 " + state.reaction.completedRounds + " 轮成绩。",
+          reactionMs < 280 ? "ok" : ""
+        );
+        updateReactionPanel();
+
+        if (state.reaction.completedRounds >= state.reaction.rounds) {
+          queueReactionRound(450);
+        } else {
+          queueReactionRound(520);
+        }
+      }
+
+      function updateReactionPanel() {
+        const configuredRounds = state.reaction.active ? state.reaction.rounds : Number(refs.reactionRounds.value);
+        const avgMs = state.reaction.results.length > 0
+          ? state.reaction.results.reduce((sum, value) => sum + value, 0) / state.reaction.results.length
+          : 0;
+        const shownStep = state.reaction.active
+          ? Math.min(state.reaction.completedRounds + 1, configuredRounds)
+          : state.reaction.completedRounds > 0
+          ? Math.min(state.reaction.completedRounds, configuredRounds)
+          : 0;
+
+        refs.reactionStep.textContent = shownStep + " / " + configuredRounds;
+        refs.reactionLast.textContent = state.reaction.lastMs ? formatShort(state.reaction.lastMs) : "-";
+        refs.reactionAvg.textContent = state.reaction.results.length > 0 ? formatShort(avgMs) : "-";
+        refs.reactionFalseCount.textContent = String(state.reaction.falseStarts);
+      }
+
+      function finishReactionSession() {
+        clearReactionTimer();
+        state.reaction.active = false;
+        state.reaction.status = "done";
+        refs.reactionStartBtn.disabled = false;
+
+        const avgMs = state.reaction.results.length > 0
+          ? state.reaction.results.reduce((sum, value) => sum + value, 0) / state.reaction.results.length
+          : 0;
+        const bestMs = state.reaction.results.length > 0 ? Math.min(...state.reaction.results) : 0;
+        const durationMs = performance.now() - state.reaction.sessionStart;
+
+        refs.reactionZone.className = "reaction-zone";
+        refs.reactionTitle.textContent = "整组完成";
+        refs.reactionText.textContent = "平均 " + formatShort(avgMs) + "，最佳 " + formatShort(bestMs) + "。";
+        refs.reactionStep.textContent = state.reaction.rounds + " / " + state.reaction.rounds;
+        refs.reactionAvg.textContent = state.reaction.results.length > 0 ? formatShort(avgMs) : "-";
+        refs.reactionLast.textContent = state.reaction.lastMs ? formatShort(state.reaction.lastMs) : "-";
+        refs.reactionFalseCount.textContent = String(state.reaction.falseStarts);
+        setStatus(
+          refs.reactionStatus,
+          "完成，平均 " + formatShort(avgMs) + "，最佳 " + formatShort(bestMs) + "。",
+          avgMs > 0 && avgMs < 300 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "reaction-" + Date.now(),
+          game: "反应时",
+          timestamp: Date.now(),
+          durationMs: Math.round(durationMs),
+          metricMs: Math.round(avgMs),
+          bestMs: Math.round(bestMs),
+          score: avgMs > 0 ? Number((1000 / avgMs).toFixed(2)) : 0,
+          summary: state.reaction.rounds + " 轮反应测试",
+          detailText: "平均 " + formatShort(avgMs) + " / 最佳 " + formatShort(bestMs) + " / 抢跑 " + state.reaction.falseStarts
+        });
+      }
+
+      function initSustained() {
+        const resetWhenIdle = () => {
+          if (state.sustained.active) {
+            return;
+          }
+
+          state.sustained.rounds = Number(refs.sustainedRounds.value);
+          state.sustained.interval = Number(refs.sustainedInterval.value);
+          state.sustained.poolSize = Number(refs.sustainedPoolSize.value);
+          state.sustained.customLetters = refs.sustainedLetters.value;
+          state.sustained.sequence = [];
+          state.sustained.targetLetters = [];
+          state.sustained.currentIndex = -1;
+          state.sustained.currentStimulus = null;
+          state.sustained.stepStartedAt = 0;
+          state.sustained.responses = new Map();
+          state.sustained.hits = 0;
+          state.sustained.misses = 0;
+          state.sustained.falseAlarms = 0;
+          state.sustained.correctSkips = 0;
+          state.sustained.totalRt = 0;
+          state.sustained.sessionStart = 0;
+          refs.sustainedZone.className = "sustained-zone";
+          refs.sustainedStimulus.textContent = "准备";
+          refs.sustainedText.textContent = "点击开始后，字符会连续出现。看到目标字母就点这里，看到其他字母或符号就保持不动。";
+          refs.sustainedProgress.style.width = "0%";
+          setStatus(refs.sustainedStatus, "保持一条规则即可：只有目标字母点，其他字母和符号都别点。开始后会自动连续呈现整组刺激。", "");
+          updateSustainedPoolPreview();
+          updateSustainedPanel();
+        };
+
+        refs.sustainedRounds.addEventListener("change", resetWhenIdle);
+        refs.sustainedInterval.addEventListener("change", resetWhenIdle);
+        refs.sustainedPoolSize.addEventListener("change", resetWhenIdle);
+        refs.sustainedLetters.addEventListener("input", resetWhenIdle);
+        refs.sustainedLetters.addEventListener("change", () => {
+          if (state.sustained.active) {
+            return;
+          }
+          const normalized = sanitizeSustainedLetters(refs.sustainedLetters.value);
+          refs.sustainedLetters.value = normalized.length ? normalized.join(" ") : "X";
+          resetWhenIdle();
+        });
+        refs.sustainedStartBtn.addEventListener("click", startSustainedGame);
+        refs.sustainedZone.addEventListener("pointerdown", registerSustainedResponse);
+        refs.sustainedZone.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            registerSustainedResponse(event);
+          }
+        });
+
+        resetWhenIdle();
+      }
+
+      function sanitizeSustainedLetters(raw) {
+        const matches = String(raw || "").toUpperCase().match(/[A-Z]/g) || [];
+        return matches.filter((letter, index) => matches.indexOf(letter) === index);
+      }
+
+      function buildSustainedTargetConfig(poolSize, customLettersRaw) {
+        const requestedSize = Math.max(1, Math.min(6, Number(poolSize) || 1));
+        const typedLetters = sanitizeSustainedLetters(customLettersRaw);
+        const fallbackLetters = typedLetters.length ? typedLetters : ["X"];
+        const targetLetters = fallbackLetters.slice(0, requestedSize);
+
+        return {
+          targetLetters,
+          requestedSize,
+          typedLetters,
+          usingDefaultX: typedLetters.length === 0,
+          hasOverflow: fallbackLetters.length > requestedSize
+        };
+      }
+
+      function updateSustainedPoolPreview() {
+        const targetInfo = buildSustainedTargetConfig(refs.sustainedPoolSize.value, refs.sustainedLetters.value);
+
+        if (targetInfo.usingDefaultX) {
+          refs.sustainedPool.textContent = "当前目标字母：X。未填写时默认只对 X 点按。";
+          return;
+        }
+
+        if (targetInfo.typedLetters.length < targetInfo.requestedSize) {
+          refs.sustainedPool.textContent = "当前已设置目标字母：" + targetInfo.targetLetters.join(" / ") + "。如需更多，可继续补充到最多 " + targetInfo.requestedSize + " 个。";
+          return;
+        }
+
+        if (targetInfo.hasOverflow) {
+          refs.sustainedPool.textContent = "当前生效目标字母：" + targetInfo.targetLetters.join(" / ") + "。多出的字母暂未启用。";
+          return;
+        }
+
+        refs.sustainedPool.textContent = "当前目标字母：" + targetInfo.targetLetters.join(" / ");
+      }
+
+      function buildSustainedSequence(rounds, targetLetters) {
+        const totalRounds = Math.max(1, Number(rounds) || 48);
+        const nonTargetLetters = SUSTAINED_ALPHABET.filter((letter) => !targetLetters.includes(letter));
+        const targetCount = Math.max(8, Math.min(totalRounds - 12, Math.round(totalRounds * 0.26)));
+        const symbolCount = Math.max(8, Math.min(totalRounds - targetCount - 1, Math.round(totalRounds * 0.22)));
+        const letterCount = Math.max(totalRounds - targetCount - symbolCount, 1);
+        const categories = [];
+
+        for (let i = 0; i < targetCount; i += 1) {
+          categories.push("target");
+        }
+        for (let i = 0; i < letterCount; i += 1) {
+          categories.push("letter");
+        }
+        for (let i = 0; i < symbolCount; i += 1) {
+          categories.push("symbol");
+        }
+
+        return shuffle(categories).slice(0, totalRounds).map((type) => {
+          if (type === "target") {
+            return {
+              type: "target",
+              value: targetLetters[Math.floor(Math.random() * targetLetters.length)]
+            };
+          }
+          if (type === "letter") {
+            return {
+              type: "letter",
+              value: nonTargetLetters[Math.floor(Math.random() * nonTargetLetters.length)]
+            };
+          }
+          return {
+            type: "symbol",
+            value: SUSTAINED_SYMBOLS[Math.floor(Math.random() * SUSTAINED_SYMBOLS.length)]
+          };
+        });
+      }
+
+      function stopSustainedTimer() {
+        if (state.sustained.timeoutId) {
+          clearTimeout(state.sustained.timeoutId);
+          state.sustained.timeoutId = null;
+        }
+      }
+
+      function startSustainedGame() {
+        stopSustainedTimer();
+        state.sustained.rounds = Number(refs.sustainedRounds.value);
+        state.sustained.interval = Number(refs.sustainedInterval.value);
+        state.sustained.poolSize = Number(refs.sustainedPoolSize.value);
+        state.sustained.customLetters = refs.sustainedLetters.value;
+        const targetInfo = buildSustainedTargetConfig(state.sustained.poolSize, state.sustained.customLetters);
+        state.sustained.targetLetters = targetInfo.targetLetters;
+        state.sustained.sequence = buildSustainedSequence(state.sustained.rounds, state.sustained.targetLetters);
+        state.sustained.currentIndex = -1;
+        state.sustained.currentStimulus = null;
+        state.sustained.stepStartedAt = 0;
+        state.sustained.active = true;
+        state.sustained.responses = new Map();
+        state.sustained.hits = 0;
+        state.sustained.misses = 0;
+        state.sustained.falseAlarms = 0;
+        state.sustained.correctSkips = 0;
+        state.sustained.totalRt = 0;
+        state.sustained.sessionStart = performance.now();
+        refs.sustainedStartBtn.disabled = true;
+        refs.sustainedZone.className = "sustained-zone active";
+        refs.sustainedStimulus.textContent = "准备";
+        refs.sustainedText.textContent = "马上开始。把规则保持住：只有目标字母点，其他字母和符号都不点。";
+        refs.sustainedPool.textContent = "本组目标字母：" + state.sustained.targetLetters.join(" / ");
+        refs.sustainedProgress.style.width = "0%";
+        setStatus(refs.sustainedStatus, "训练开始。刺激会连续出现，先稳住节奏。", "");
+        updateSustainedPanel();
+
+        state.sustained.timeoutId = window.setTimeout(() => {
+          nextSustainedStimulus();
+        }, 800);
+      }
+
+      function nextSustainedStimulus() {
+        if (!state.sustained.active) {
+          return;
+        }
+
+        state.sustained.currentIndex += 1;
+        if (state.sustained.currentIndex >= state.sustained.rounds) {
+          finishSustainedGame();
+          return;
+        }
+
+        state.sustained.currentStimulus = state.sustained.sequence[state.sustained.currentIndex];
+        state.sustained.stepStartedAt = performance.now();
+        refs.sustainedZone.className = "sustained-zone active";
+        refs.sustainedStimulus.style.animation = "none";
+        refs.sustainedStimulus.textContent = state.sustained.currentStimulus.value;
+        void refs.sustainedStimulus.offsetWidth;
+        refs.sustainedStimulus.style.animation = "";
+        refs.sustainedText.textContent = "保持规则：只有目标字母点，其他字母和符号都不点。";
+        updateSustainedPanel();
+
+        state.sustained.timeoutId = window.setTimeout(() => {
+          evaluateSustainedStimulus();
+          nextSustainedStimulus();
+        }, state.sustained.interval);
+      }
+
+      function registerSustainedResponse(event) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        if (!state.sustained.active || state.sustained.currentIndex < 0) {
+          return;
+        }
+
+        refs.sustainedZone.classList.remove("pressed");
+        void refs.sustainedZone.offsetWidth;
+        refs.sustainedZone.classList.add("pressed");
+        window.setTimeout(() => {
+          refs.sustainedZone.classList.remove("pressed");
+        }, 90);
+
+        if (state.sustained.responses.has(state.sustained.currentIndex)) {
+          return;
+        }
+
+        state.sustained.responses.set(
+          state.sustained.currentIndex,
+          performance.now() - state.sustained.stepStartedAt
+        );
+        refs.sustainedText.textContent = "本次点击已记录，准备接下一个字符。";
+      }
+
+      function evaluateSustainedStimulus() {
+        const stimulus = state.sustained.sequence[state.sustained.currentIndex];
+        const responded = state.sustained.responses.has(state.sustained.currentIndex);
+
+        if (!stimulus) {
+          return;
+        }
+
+        if (stimulus.type === "target") {
+          if (responded) {
+            state.sustained.hits += 1;
+            state.sustained.totalRt += state.sustained.responses.get(state.sustained.currentIndex);
+          } else {
+            state.sustained.misses += 1;
+            refs.sustainedText.textContent = "刚才漏按了一次目标字母，继续盯住下一个字符。";
+            setStatus(refs.sustainedStatus, "出现漏按，后面继续把节奏拉回来。", "warn");
+          }
+        } else if (responded) {
+          state.sustained.falseAlarms += 1;
+          refs.sustainedText.textContent = "刚才不是目标字母，误按已记录。继续。";
+          setStatus(refs.sustainedStatus, "刚才对非目标刺激出手了，误按已记录。", "warn");
+        } else {
+          state.sustained.correctSkips += 1;
+        }
+
+        updateSustainedPanel();
+      }
+
+      function updateSustainedPanel() {
+        const configuredRounds = state.sustained.active ? state.sustained.rounds : Number(refs.sustainedRounds.value);
+        const evaluated = state.sustained.hits + state.sustained.misses + state.sustained.falseAlarms + state.sustained.correctSkips;
+        const shownStep = state.sustained.active
+          ? Math.max(0, Math.min(state.sustained.currentIndex + 1, configuredRounds))
+          : evaluated > 0
+          ? Math.min(evaluated, configuredRounds)
+          : 0;
+        const accuracy = evaluated > 0
+          ? ((state.sustained.hits + state.sustained.correctSkips) / evaluated) * 100
+          : 0;
+        const avgRt = state.sustained.hits > 0 ? state.sustained.totalRt / state.sustained.hits : 0;
+        const progressBase = state.sustained.active ? shownStep : evaluated;
+
+        refs.sustainedStep.textContent = shownStep + " / " + configuredRounds;
+        refs.sustainedAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.sustainedAvgRt.textContent = state.sustained.hits > 0 ? formatShort(avgRt) : "-";
+        refs.sustainedMisses.textContent = String(state.sustained.misses);
+        refs.sustainedFalse.textContent = String(state.sustained.falseAlarms);
+        refs.sustainedProgress.style.width = (configuredRounds > 0 ? (progressBase / configuredRounds) * 100 : 0).toFixed(1) + "%";
+      }
+
+      function finishSustainedGame() {
+        stopSustainedTimer();
+        state.sustained.active = false;
+        refs.sustainedStartBtn.disabled = false;
+
+        const targetCount = state.sustained.hits + state.sustained.misses;
+        const totalEvaluated = targetCount + state.sustained.falseAlarms + state.sustained.correctSkips;
+        const accuracy = totalEvaluated > 0
+          ? ((state.sustained.hits + state.sustained.correctSkips) / totalEvaluated) * 100
+          : 0;
+        const hitRate = targetCount > 0 ? (state.sustained.hits / targetCount) * 100 : 0;
+        const avgRt = state.sustained.hits > 0 ? state.sustained.totalRt / state.sustained.hits : 0;
+        const durationMs = state.sustained.sessionStart ? performance.now() - state.sustained.sessionStart : 0;
+
+        refs.sustainedZone.className = "sustained-zone";
+        refs.sustainedStimulus.textContent = "完成";
+        refs.sustainedText.textContent = "目标字母命中 " + hitRate.toFixed(0) + "%，平均反应 " + formatShort(avgRt) + "。";
+        refs.sustainedProgress.style.width = "100%";
+        refs.sustainedStep.textContent = state.sustained.rounds + " / " + state.sustained.rounds;
+        refs.sustainedAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.sustainedAvgRt.textContent = state.sustained.hits > 0 ? formatShort(avgRt) : "-";
+        refs.sustainedMisses.textContent = String(state.sustained.misses);
+        refs.sustainedFalse.textContent = String(state.sustained.falseAlarms);
+        setStatus(
+          refs.sustainedStatus,
+          "完成，总准确率 " + accuracy.toFixed(0) + "%，目标字母命中 " + hitRate.toFixed(0) + "%。",
+          accuracy >= 84 ? "ok" : ""
+        );
+
+        addRecord({
+          id: "sustained-" + Date.now(),
+          game: "持续注意力",
+          timestamp: Date.now(),
+          durationMs: Math.round(durationMs),
+          metricMs: state.sustained.hits > 0 ? Math.round(avgRt) : 0,
+          score: Number(accuracy.toFixed(2)),
+          summary: state.sustained.rounds + " 个刺激 / 目标字母 " + state.sustained.targetLetters.join(" "),
+          detailText: "目标命中 " + hitRate.toFixed(0) + "% / 平均反应 " + formatShort(avgRt) + " / 漏按 " + state.sustained.misses + " / 误按 " + state.sustained.falseAlarms
+        });
+      }
+
+      function createBreathBeatStates() {
+        return Array.from({ length: BREATH_TOTAL_BEATS }, () => "pending");
+      }
+
+      function ensureBreathAudioContext() {
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) {
+          return null;
+        }
+        if (!breathAudioContext) {
+          breathAudioContext = new AudioContextCtor();
+        }
+        if (breathAudioContext.state === "suspended") {
+          breathAudioContext.resume().catch(() => {});
+        }
+        return breathAudioContext;
+      }
+
+      function playBreathCue(accented) {
+        if (state.breath.cueMode !== "audio") {
+          return;
+        }
+
+        const audioContext = ensureBreathAudioContext();
+        if (!audioContext) {
+          return;
+        }
+
+        const now = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(accented ? 660 : 440, now);
+        gain.gain.setValueAtTime(0.0001, now);
+        gain.gain.exponentialRampToValueAtTime(accented ? 0.05 : 0.032, now + 0.01);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + (accented ? 0.16 : 0.12));
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+        oscillator.start(now);
+        oscillator.stop(now + (accented ? 0.18 : 0.14));
+      }
+
+      function renderBreathTrack() {
+        refs.breathTrack.innerHTML = "";
+        for (let i = 0; i < BREATH_TOTAL_BEATS; i += 1) {
+          const marker = document.createElement("div");
+          marker.className = "breath-beat";
+          refs.breathTrack.appendChild(marker);
+        }
+      }
+
+      function updateBreathTrack() {
+        const markers = refs.breathTrack.children;
+
+        for (let i = 0; i < markers.length; i += 1) {
+          let className = "breath-beat";
+          const result = state.breath.cycleBeatStates[i];
+          if (result && result !== "pending") {
+            className += " " + result;
+          }
+          if (state.breath.active && i === state.breath.beatInCycle) {
+            className += " current";
+          }
+          markers[i].className = className;
+        }
+      }
+
+      function getBreathOrbScale(phase, beatInCycle, inhaleBeats, exhaleBeats) {
+        if (phase === "inhale") {
+          const inhaleProgress = (beatInCycle + 1) / inhaleBeats;
+          return 0.82 + inhaleProgress * 0.34;
+        }
+        const exhaleBeat = beatInCycle - inhaleBeats;
+        const exhaleProgress = (exhaleBeat + 1) / exhaleBeats;
+        return 1.16 - exhaleProgress * 0.38;
+      }
+
+      function initBreath() {
+        const resetWhenIdle = () => {
+          if (state.breath.active) {
+            return;
+          }
+
+          state.breath.cycles = Number(refs.breathCycles.value);
+          state.breath.cueMode = refs.breathCueMode.value;
+          state.breath.phase = "idle";
+          state.breath.cycleIndex = 0;
+          state.breath.beatInCycle = -1;
+          state.breath.totalBeatIndex = -1;
+          state.breath.startTime = 0;
+          state.breath.expectedAt = 0;
+          state.breath.currentBeatResponse = null;
+          state.breath.hits = 0;
+          state.breath.misses = 0;
+          state.breath.offBeats = 0;
+          state.breath.totalAbsDelta = 0;
+          state.breath.lastDeltaMs = null;
+          state.breath.completedCycles = 0;
+          state.breath.durationMs = 0;
+          state.breath.cycleBeatStates = createBreathBeatStates();
+          refs.breathStartBtn.disabled = false;
+          refs.breathStopBtn.disabled = true;
+          refs.breathZone.className = "breath-zone";
+          refs.breathWord.textContent = "准备";
+          refs.breathSubtext.textContent = "点击开始后，跟着每一拍轻点一下，吸 4 秒，呼 6 秒。";
+          refs.breathOrb.classList.remove("beat");
+          refs.breathOrb.style.transform = "scale(0.82)";
+          refs.breathProgress.style.width = "0%";
+          setStatus(refs.breathStatus, "每拍轻点一次，吸气 4 拍，呼气 6 拍，动作尽量小。", "");
+          renderBreathTrack();
+          updateBreathTrack();
+          updateBreathPanel();
+        };
+
+        refs.breathCycles.addEventListener("change", resetWhenIdle);
+        refs.breathCueMode.addEventListener("change", resetWhenIdle);
+        refs.breathStartBtn.addEventListener("click", startBreathSession);
+        refs.breathStopBtn.addEventListener("click", () => {
+          if (state.breath.active) {
+            finishBreathSession(true);
+          }
+        });
+        refs.breathZone.addEventListener("pointerdown", registerBreathTap);
+        refs.breathZone.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            registerBreathTap(event);
+          }
+        });
+
+        resetWhenIdle();
+      }
+
+      function clearBreathTimer() {
+        if (state.breath.timeoutId) {
+          clearTimeout(state.breath.timeoutId);
+          state.breath.timeoutId = null;
+        }
+      }
+
+      function startBreathSession() {
+        clearBreathTimer();
+        state.breath.cycles = Number(refs.breathCycles.value);
+        state.breath.cueMode = refs.breathCueMode.value;
+        state.breath.active = true;
+        state.breath.phase = "ready";
+        state.breath.cycleIndex = 0;
+        state.breath.beatInCycle = -1;
+        state.breath.totalBeatIndex = -1;
+        state.breath.startTime = performance.now();
+        state.breath.expectedAt = 0;
+        state.breath.currentBeatResponse = null;
+        state.breath.hits = 0;
+        state.breath.misses = 0;
+        state.breath.offBeats = 0;
+        state.breath.totalAbsDelta = 0;
+        state.breath.lastDeltaMs = null;
+        state.breath.completedCycles = 0;
+        state.breath.durationMs = 0;
+        state.breath.cycleBeatStates = createBreathBeatStates();
+        refs.breathStartBtn.disabled = true;
+        refs.breathStopBtn.disabled = false;
+        refs.breathZone.className = "breath-zone active";
+        refs.breathWord.textContent = "预备";
+        refs.breathSubtext.textContent = "第一拍即将开始。轻点屏幕跟拍，吸 4 秒，呼 6 秒。";
+        refs.breathOrb.classList.remove("beat");
+        refs.breathOrb.style.transform = "scale(0.82)";
+        refs.breathProgress.style.width = "0%";
+        renderBreathTrack();
+        updateBreathTrack();
+        updateBreathPanel();
+
+        const audioReady = state.breath.cueMode !== "audio" || !!ensureBreathAudioContext();
+        setStatus(
+          refs.breathStatus,
+          audioReady
+            ? "训练开始。每拍轻点一次，把呼吸和动作都放慢。"
+            : "当前环境可能不支持节拍音，本次继续使用视觉提示。",
+          audioReady ? "" : "warn"
+        );
+
+        state.breath.timeoutId = window.setTimeout(() => {
+          state.breath.totalBeatIndex = 0;
+          startCurrentBreathBeat();
+        }, 900);
+      }
+
+      function startCurrentBreathBeat() {
+        if (!state.breath.active) {
+          return;
+        }
+
+        const totalPlannedBeats = state.breath.cycles * BREATH_TOTAL_BEATS;
+        if (state.breath.totalBeatIndex >= totalPlannedBeats) {
+          finishBreathSession(false);
+          return;
+        }
+
+        state.breath.cycleIndex = Math.floor(state.breath.totalBeatIndex / BREATH_TOTAL_BEATS);
+        state.breath.beatInCycle = state.breath.totalBeatIndex % BREATH_TOTAL_BEATS;
+        if (state.breath.beatInCycle === 0) {
+          state.breath.cycleBeatStates = createBreathBeatStates();
+        }
+
+        state.breath.phase = state.breath.beatInCycle < state.breath.inhaleBeats ? "inhale" : "exhale";
+        state.breath.expectedAt = performance.now();
+        state.breath.currentBeatResponse = null;
+        refs.breathZone.className = "breath-zone active " + state.breath.phase;
+        refs.breathWord.textContent = state.breath.phase === "inhale" ? "吸" : "呼";
+
+        const phaseBeat = state.breath.phase === "inhale"
+          ? state.breath.beatInCycle + 1
+          : state.breath.beatInCycle - state.breath.inhaleBeats + 1;
+        const phaseTotal = state.breath.phase === "inhale"
+          ? state.breath.inhaleBeats
+          : state.breath.exhaleBeats;
+        refs.breathSubtext.textContent = state.breath.phase === "inhale"
+          ? "第 " + (state.breath.cycleIndex + 1) + " 轮：吸气第 " + phaseBeat + " / " + phaseTotal + " 拍，轻点一次。"
+          : "第 " + (state.breath.cycleIndex + 1) + " 轮：呼气第 " + phaseBeat + " / " + phaseTotal + " 拍，轻点一次。";
+        refs.breathOrb.classList.remove("beat");
+        void refs.breathOrb.offsetWidth;
+        refs.breathOrb.classList.add("beat");
+        refs.breathOrb.style.transform = "scale(" + getBreathOrbScale(
+          state.breath.phase,
+          state.breath.beatInCycle,
+          state.breath.inhaleBeats,
+          state.breath.exhaleBeats
+        ).toFixed(2) + ")";
+        updateBreathTrack();
+        updateBreathPanel();
+        playBreathCue(
+          state.breath.beatInCycle === 0 || state.breath.beatInCycle === state.breath.inhaleBeats
+        );
+
+        if (state.breath.totalBeatIndex === totalPlannedBeats - 1) {
+          state.breath.timeoutId = window.setTimeout(() => {
+            evaluateCurrentBreathBeat();
+            finishBreathSession(false);
+          }, state.breath.beatMs);
+          return;
+        }
+
+        state.breath.timeoutId = window.setTimeout(() => {
+          evaluateCurrentBreathBeat();
+          state.breath.totalBeatIndex += 1;
+          startCurrentBreathBeat();
+        }, state.breath.beatMs);
+      }
+
+      function registerBreathTap(event) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        refs.breathZone.classList.remove("pressed");
+        void refs.breathZone.offsetWidth;
+        refs.breathZone.classList.add("pressed");
+        window.setTimeout(() => {
+          refs.breathZone.classList.remove("pressed");
+        }, 90);
+
+        if (!state.breath.active || state.breath.expectedAt <= 0 || state.breath.currentBeatResponse !== null) {
+          return;
+        }
+
+        const delta = performance.now() - state.breath.expectedAt;
+        state.breath.currentBeatResponse = delta;
+        refs.breathSubtext.textContent = delta <= BREATH_TAP_WINDOW_MS
+          ? "这一拍已记录，继续稳住节奏。"
+          : "这一拍已记录，但偏慢了一点，下一拍再贴近节拍。";
+        updateBreathPanel();
+      }
+
+      function evaluateCurrentBreathBeat() {
+        if (!state.breath.active || state.breath.beatInCycle < 0) {
+          return;
+        }
+
+        const beatIndex = state.breath.beatInCycle;
+        const response = state.breath.currentBeatResponse;
+
+        if (response === null) {
+          state.breath.misses += 1;
+          state.breath.cycleBeatStates[beatIndex] = "miss";
+        } else {
+          const absDelta = Math.abs(response);
+          state.breath.lastDeltaMs = Math.round(absDelta);
+          if (absDelta <= BREATH_TAP_WINDOW_MS) {
+            state.breath.hits += 1;
+            state.breath.totalAbsDelta += absDelta;
+            state.breath.cycleBeatStates[beatIndex] = "hit";
+          } else {
+            state.breath.offBeats += 1;
+            state.breath.cycleBeatStates[beatIndex] = "off";
+          }
+        }
+
+        if (beatIndex === BREATH_TOTAL_BEATS - 1) {
+          state.breath.completedCycles = Math.min(state.breath.cycleIndex + 1, state.breath.cycles);
+        }
+
+        updateBreathTrack();
+        updateBreathPanel();
+      }
+
+      function updateBreathPanel() {
+        const configuredCycles = state.breath.active ? state.breath.cycles : Number(refs.breathCycles.value);
+        const totalPlannedBeats = configuredCycles * BREATH_TOTAL_BEATS;
+        const evaluatedBeats = state.breath.hits + state.breath.misses + state.breath.offBeats;
+        const accuracy = evaluatedBeats > 0 ? (state.breath.hits / evaluatedBeats) * 100 : 0;
+        const avgDelta = state.breath.hits > 0 ? state.breath.totalAbsDelta / state.breath.hits : 0;
+
+        let progress = 0;
+        if (state.breath.active && totalPlannedBeats > 0) {
+          progress = Math.min((state.breath.totalBeatIndex + 1) / totalPlannedBeats, 1);
+        } else if (state.breath.phase === "done") {
+          progress = 1;
+        } else if (totalPlannedBeats > 0) {
+          progress = Math.min(evaluatedBeats / totalPlannedBeats, 1);
+        }
+
+        let beatLabel = "0 / " + BREATH_TOTAL_BEATS;
+        if (state.breath.phase === "done") {
+          beatLabel = BREATH_TOTAL_BEATS + " / " + BREATH_TOTAL_BEATS;
+        } else if (state.breath.beatInCycle >= 0) {
+          beatLabel = (state.breath.beatInCycle + 1) + " / " + BREATH_TOTAL_BEATS;
+        }
+
+        refs.breathPhase.textContent = getBreathPhaseLabel(state.breath.phase);
+        refs.breathBeat.textContent = beatLabel;
+        refs.breathCyclesDone.textContent = state.breath.completedCycles + " / " + configuredCycles;
+        refs.breathAccuracy.textContent = accuracy.toFixed(0) + "%";
+        refs.breathAvgDelta.textContent = state.breath.hits > 0 ? formatMetricMs(avgDelta) : "-";
+        refs.breathErrors.textContent = state.breath.misses + " / " + state.breath.offBeats;
+        refs.breathProgress.style.width = (progress * 100).toFixed(1) + "%";
+      }
+
+      function finishBreathSession(aborted) {
+        clearBreathTimer();
+        state.breath.durationMs = state.breath.startTime ? performance.now() - state.breath.startTime : 0;
+        state.breath.active = false;
+        state.breath.phase = aborted ? "stopped" : "done";
+        refs.breathStartBtn.disabled = false;
+        refs.breathStopBtn.disabled = true;
+        refs.breathZone.className = "breath-zone done";
+        refs.breathOrb.classList.remove("beat");
+        refs.breathOrb.style.transform = "scale(0.9)";
+
+        const evaluatedBeats = state.breath.hits + state.breath.misses + state.breath.offBeats;
+        const accuracy = evaluatedBeats > 0 ? (state.breath.hits / evaluatedBeats) * 100 : 0;
+        const avgDelta = state.breath.hits > 0 ? state.breath.totalAbsDelta / state.breath.hits : 0;
+
+        if (aborted) {
+          refs.breathWord.textContent = "暂停";
+          refs.breathSubtext.textContent = "本次已提前结束，没有写入记录。";
+          setStatus(refs.breathStatus, "已提前结束，当前这次不写入记录。", "warn");
+          updateBreathTrack();
+          updateBreathPanel();
+          return;
+        }
+
+        state.breath.completedCycles = state.breath.cycles;
+        refs.breathWord.textContent = "完成";
+        refs.breathSubtext.textContent = "已完成 " + state.breath.cycles + " 轮，重新开始会生成一组新的节拍流程。";
+        setStatus(
+          refs.breathStatus,
+          "完成，节拍命中 " + accuracy.toFixed(0) + "%，平均偏差 " + (state.breath.hits > 0 ? formatMetricMs(avgDelta) : "-") + "。",
+          accuracy >= 80 ? "ok" : ""
+        );
+        updateBreathTrack();
+        updateBreathPanel();
+
+        addRecord({
+          id: "breath-" + Date.now(),
+          game: "节拍呼吸",
+          timestamp: Date.now(),
+          durationMs: Math.round(state.breath.durationMs),
+          metricMs: state.breath.hits > 0 ? Math.round(avgDelta) : 0,
+          score: Number(accuracy.toFixed(2)),
+          summary: state.breath.cycles + " 轮 4 吸 6 呼",
+          detailText: getBreathCueModeLabel(state.breath.cueMode)
+            + " / 命中 " + accuracy.toFixed(0) + "%"
+            + " / 平均偏差 " + (state.breath.hits > 0 ? formatMetricMs(avgDelta) : "-")
+            + " / 漏拍 " + state.breath.misses
+            + " / 偏拍 " + state.breath.offBeats
+        });
+      }
+
+      function exportRecords() {
+        if (state.records.length === 0) {
+          setStatus(refs.reactionStatus, "当前没有可导出的记录。", "warn");
+          return;
+        }
+
+        const blob = new Blob([JSON.stringify(state.records, null, 2)], {
+          type: "application/json;charset=utf-8"
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "brain-training-records-" + new Date().toISOString().slice(0, 10) + ".json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function clearRecords() {
+        if (!window.confirm("确定要清空所有训练记录吗？")) {
+          return;
+        }
+        state.records = [];
+        saveRecords();
+        renderRecords();
+        renderStats();
+      }
+
+      function initRecordsActions() {
+        refs.exportBtn.addEventListener("click", exportRecords);
+        refs.clearBtn.addEventListener("click", clearRecords);
+      }
+
+      loadRecords();
+      renderStats();
+      renderRecords();
+      initSidebar();
+      initSchulte();
+      initTBack();
+      initStroop();
+      initGoNoGo();
+      initAntiSaccade();
+      initFocus();
+      initReaction();
+      initSustained();
+      initBreath();
+      initRecordsActions();
+      initPanelSwitcher();
+    })();
+  </script>
+</body>
+</html>
